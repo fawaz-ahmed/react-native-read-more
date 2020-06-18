@@ -1,0 +1,37 @@
+{
+  "name": "react-native-read-more",
+  "version": "1.0.0",
+  "description": "A simple react native library to show large blocks of text in a condensed manner with the ability to collapse and expand.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fawaz-ahmed/react-native-read-more.git"
+  },
+  "keywords": [
+    "react-native-read-more",
+    "react-native-component",
+    "react-native",
+    "read",
+    "more",
+    "less",
+    "text",
+    "react",
+    "react native",
+    "mobile",
+    "ios",
+    "android",
+    "ui"
+  ],
+  "author": "Fawaz Ahmed",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fawaz-ahmed/react-native-read-more/issues"
+  },
+  "homepage": "https://github.com/fawaz-ahmed/react-native-read-more#readme",
+  "dependencies": {
+    "prop-types": "^15.7.2"
+  }
+}
