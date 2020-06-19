@@ -28,7 +28,7 @@ yarn add @fawazahmed/react-native-read-more
 
 Any additional props are passed down to underlying `Text` component.
 
-![Example](example/seemore.gif)
+![Example](example/seemore.gif =100x20)
 
 ### Usage
 
