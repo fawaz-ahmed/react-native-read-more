@@ -5,13 +5,34 @@ import {
   Text,
   View,
   TouchableOpacity,
+  LayoutAnimation,
+  Platform,
 } from 'react-native';
 
-const ReadMore = memo(props => {
+if (Platform.OS === 'android') {
+  if (UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
+}
+
+const ReadMore = memo(({
+  numberOfLines,
+  style,
+  wrapperStyle,
+  children,
+  seeMoreStyle,
+  seeMoreText,
+  seeLessStyle,
+  seeLessText,
+  animate,
+  backgroundColor,
+  ...restProps
+}) => {
   const [textHeight, setTextHeight] = useState(0);
   const [hiddenTextHeight, setHiddenTextHeight] = useState(0);
   const [seeMore, setSeeMore] = useState(false);
   const [collapsed, setCollapsed] = useState(true);
+  const [afterCollapsed, setAfterCollapsed] = useState(true);
 
   const onTextLayout = useCallback(({ nativeEvent: { layout: { height } } }) => {
     setTextHeight(height);
@@ -22,8 +43,15 @@ const ReadMore = memo(props => {
   }, [setHiddenTextHeight]);
 
   const toggle = useCallback(() => {
+    if (animate) {
+      LayoutAnimation.configureNext(LayoutAnimation.create(
+        500,
+        LayoutAnimation.Types.linear,
+        LayoutAnimation.Properties.opacity
+      ));
+    }
     setCollapsed(prev => !prev);
-  }, [setCollapsed]);
+  }, [setCollapsed, animate]);
 
   useEffect(() => {
     if (!hiddenTextHeight || !textHeight) return;
@@ -31,44 +59,55 @@ const ReadMore = memo(props => {
     setSeeMore(hiddenTextHeight > textHeight);
   }, [textHeight, hiddenTextHeight])
 
+  useEffect(() => {
+    setAfterCollapsed(collapsed)
+  }, [collapsed])
+
   const textProps = collapsed ? {
     onLayout: onTextLayout,
-    numberOfLines: props.numberOfLines,
+    numberOfLines,
     ellipsizeMode: 'tail'
   } : {};
 
+  console.log('*********')
+  console.log('collapsed', collapsed);
+
   return (
-    <View style={styles.container}>
+    <View style={wrapperStyle}>
       <Text
         style={StyleSheet.flatten([
-          Array.isArray(props.style) ? StyleSheet.flatten(props.style) : props.style,
+          Array.isArray(style) ? StyleSheet.flatten(style) : style,
           styles.hiddenText,
         ])}
-        numberOfLines={props.numberOfLines + 1}
+        numberOfLines={numberOfLines + 1}
         ellipsizeMode={'clip'}
         onLayout={onHiddenTextLayout}
       >
-        {props.children || ''}
+        {children || ''}
       </Text>
       <Text
-        style={props.style}
+        {...restProps}
+        style={style}
         {...textProps}
       >
-        {props.children || ''}
+        {children || ''}
       </Text>
-      {seeMore && collapsed && (
+      {seeMore && collapsed && afterCollapsed && (
         <View style={styles.seeMoreContainer}>
-          <TouchableOpacity onPress={toggle} style={styles.seeMoreButton}>
-            <Text style={props.seeMoreStyle}>
-              {props.seeMoreText}
+          <TouchableOpacity
+            onPress={toggle}
+            style={[styles.seeMoreButton, { backgroundColor }]}
+          >
+            <Text style={seeMoreStyle}>
+              {seeMoreText}
             </Text>
           </TouchableOpacity>
         </View>
       )}
       {seeMore && !collapsed && (
         <TouchableOpacity onPress={toggle} style={styles.seeLessContainer}>
-          <Text style={props.seeLessStyle}>
-            {props.seeLessText}
+          <Text style={seeLessStyle}>
+            {seeLessText}
           </Text>
         </TouchableOpacity>
       )}
@@ -95,7 +134,6 @@ const styles = StyleSheet.create({
   },
   seeMoreButton: {
     flexDirection: 'row',
-    backgroundColor: 'white',
   },
   seeLessContainer: {
     paddingVertical: 4,
@@ -125,10 +163,16 @@ ReadMore.propTypes = {
     PropTypes.object,
     PropTypes.array,
   ]),
+  wrapperStyle: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array,
+  ]),
   children: PropTypes.any,
   numberOfLines: PropTypes.number,
   seeMoreText: PropTypes.string,
   seeLessText: PropTypes.string,
+  animate: PropTypes.bool,
+  backgroundColor: PropTypes.string,
 };
 
 ReadMore.defaultProps = {
@@ -141,10 +185,13 @@ ReadMore.defaultProps = {
     styles.defaultText,
     styles.seeLessText,
   ]),
+  wrapperStyle: styles.container,
   text: '',
   numberOfLines: 3,
   seeMoreText: '... See more',
   seeLessText: 'See less',
+  animate: true,
+  backgroundColor: 'white',
 };
 
 export default ReadMore;
