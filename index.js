@@ -1,3 +1,3 @@
-import ReadMore from './src/ReadMore';
+import ReadMore from './example/src/ReadMore';
 
 export default ReadMore;
