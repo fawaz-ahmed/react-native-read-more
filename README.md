@@ -16,7 +16,7 @@ yarn add @fawazahmed/react-native-read-more
 
 | Prop | Type | Required | Note |
 |---|---|---|---|
-| `style` | `style` | no | text style
+| `style` | `object or array` | no | text style
 | `seeMoreStyle` | `object or array` | no | text style for `... See more` text
 | `seeMoreText` | `string` | no | defaults to `... See more`
 | `seeLessStyle` | `object or array` | no | text style for `See less` text
@@ -25,6 +25,7 @@ yarn add @fawazahmed/react-native-read-more
 | `numberOfLines` | `number` | no | defaults to `3`
 | `animate` | `bool` | no | defaults to `true` => applies a subtle animation to see more and see less text, not the complete text itself
 | `backgroundColor` | `string` | no | defaults to `white` => supply `backgroundColor` if your background color is something other than white
+
 Any additional props are passed down to underlying `Text` component.
 
 ![Example](https://github.com/fawaz-ahmed/react-native-read-more/master/example.gif)
