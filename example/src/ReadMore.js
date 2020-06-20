@@ -69,9 +69,6 @@ const ReadMore = memo(({
     ellipsizeMode: 'tail'
   } : {};
 
-  console.log('*********')
-  console.log('collapsed', collapsed);
-
   return (
     <View style={wrapperStyle}>
       <Text
@@ -98,6 +95,9 @@ const ReadMore = memo(({
             onPress={toggle}
             style={[styles.seeMoreButton, { backgroundColor }]}
           >
+            <Text {...restProps} style={style}>
+              {'... '}
+            </Text>
             <Text style={seeMoreStyle}>
               {seeMoreText}
             </Text>
@@ -142,7 +142,6 @@ const styles = StyleSheet.create({
   seeMoreText: {
     color: 'red',
     fontWeight: 'bold',
-    paddingLeft: 4,
   },
   seeLessText: {
     color: 'red',
@@ -188,7 +187,7 @@ ReadMore.defaultProps = {
   wrapperStyle: styles.container,
   text: '',
   numberOfLines: 3,
-  seeMoreText: '... See more',
+  seeMoreText: 'See more',
   seeLessText: 'See less',
   animate: true,
   backgroundColor: 'white',

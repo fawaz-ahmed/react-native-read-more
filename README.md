@@ -17,7 +17,7 @@ yarn add @fawazahmed/react-native-read-more
 | Prop | Type | Required | Note |
 |---|---|---|---|
 | `style` | `object or array` | no | text style
-| `seeMoreStyle` | `object or array` | no | text style for `... See more` text
+| `seeMoreStyle` | `object or array` | no | text style for `See more` text
 | `seeMoreText` | `string` | no | defaults to `... See more`
 | `seeLessStyle` | `object or array` | no | text style for `See less` text
 | `seeLessText` | `string` | no | defaults to `See less`
