@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect, useCallback } from 'react';
+import React, { memo, useState, useEffect, useCallback, Component, PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import {
   StyleSheet,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   LayoutAnimation,
   Platform,
+  UIManager,
 } from 'react-native';
 
 if (Platform.OS === 'android') {
@@ -26,6 +27,7 @@ const ReadMore = memo(({
   seeLessText,
   animate,
   backgroundColor,
+  customTextComponent: TextComponent,
   ...restProps
 }) => {
   const [textHeight, setTextHeight] = useState(0);
@@ -43,14 +45,14 @@ const ReadMore = memo(({
   }, [setHiddenTextHeight]);
 
   const toggle = useCallback(() => {
+    setCollapsed(prev => !prev);
     if (animate) {
       LayoutAnimation.configureNext(LayoutAnimation.create(
-        500,
+        300,
         LayoutAnimation.Types.linear,
         LayoutAnimation.Properties.opacity
       ));
     }
-    setCollapsed(prev => !prev);
   }, [setCollapsed, animate]);
 
   useEffect(() => {
@@ -69,12 +71,9 @@ const ReadMore = memo(({
     ellipsizeMode: 'tail'
   } : {};
 
-  console.log('*********')
-  console.log('collapsed', collapsed);
-
   return (
     <View style={wrapperStyle}>
-      <Text
+      <TextComponent
         style={StyleSheet.flatten([
           Array.isArray(style) ? StyleSheet.flatten(style) : style,
           styles.hiddenText,
@@ -84,20 +83,23 @@ const ReadMore = memo(({
         onLayout={onHiddenTextLayout}
       >
         {children || ''}
-      </Text>
-      <Text
+      </TextComponent>
+      <TextComponent
         {...restProps}
         style={style}
         {...textProps}
       >
         {children || ''}
-      </Text>
+      </TextComponent>
       {seeMore && collapsed && afterCollapsed && (
         <View style={styles.seeMoreContainer}>
           <TouchableOpacity
             onPress={toggle}
             style={[styles.seeMoreButton, { backgroundColor }]}
           >
+            <TextComponent {...restProps} style={style}>
+              {'... '}
+            </TextComponent>
             <Text style={seeMoreStyle}>
               {seeMoreText}
             </Text>
@@ -142,7 +144,6 @@ const styles = StyleSheet.create({
   seeMoreText: {
     color: 'red',
     fontWeight: 'bold',
-    paddingLeft: 4,
   },
   seeLessText: {
     color: 'red',
@@ -173,6 +174,13 @@ ReadMore.propTypes = {
   seeLessText: PropTypes.string,
   animate: PropTypes.bool,
   backgroundColor: PropTypes.string,
+  customTextComponent: PropTypes.oneOfType([
+    Component,
+    PureComponent,
+    memo,
+    PropTypes.func,
+    Text,
+  ]),
 };
 
 ReadMore.defaultProps = {
@@ -188,10 +196,11 @@ ReadMore.defaultProps = {
   wrapperStyle: styles.container,
   text: '',
   numberOfLines: 3,
-  seeMoreText: '... See more',
+  seeMoreText: 'See more',
   seeLessText: 'See less',
   animate: true,
   backgroundColor: 'white',
+  customTextComponent: Text,
 };
 
 export default ReadMore;

@@ -1,5 +1,13 @@
 # react-native-read-more
-React native library to show text in a condensed way and expand when needed. Drop in replacement for `Text` component and highly customizable. Can be used with expo or native cli on all platforms.
+React native library to show text in a condensed way and expand when needed. Can be used with native or expo on all platforms.
+
+# Why another library ?
+This package is different from regular see more/less components available out there. It's smart enough to calculate where to position `See more` within the same paragraph instead of occupying another line. It is a drop-in replacement for `Text` component and you can control when to apply the see more functionality by configuring the `numberOfLines` prop.
+
+![Example](example/seemore.gif)
+
+## Seeing issues ?
+Create an issue with github or drop an email to `fawaz_ahmed@live.com`.
 
 ### Installation
 
@@ -17,7 +25,7 @@ yarn add @fawazahmed/react-native-read-more
 | Prop | Type | Required | Note |
 |---|---|---|---|
 | `style` | `object or array` | no | text style
-| `seeMoreStyle` | `object or array` | no | text style for `... See more` text
+| `seeMoreStyle` | `object or array` | no | text style for `See more` text
 | `seeMoreText` | `string` | no | defaults to `... See more`
 | `seeLessStyle` | `object or array` | no | text style for `See less` text
 | `seeLessText` | `string` | no | defaults to `See less`
@@ -25,10 +33,9 @@ yarn add @fawazahmed/react-native-read-more
 | `numberOfLines` | `number` | no | defaults to `3`
 | `animate` | `bool` | no | defaults to `true` => applies a subtle animation to see more and see less text, not the complete text itself
 | `backgroundColor` | `string` | no | defaults to `white` => supply `backgroundColor` if your background color is something other than white
+| `customTextComponent` | `React component` | no | defaults to `Text`
 
 Any additional props are passed down to underlying `Text` component.
-
-![Example](example/seemore.gif)
 
 ### Usage
 
