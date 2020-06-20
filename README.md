@@ -2,7 +2,7 @@
 React native library to show text in a condensed way and expand when needed. Can be used with native or expo on all platforms.
 
 # Why another library ?
-This package is different from regular see more/less components available out there. It's smart enough to calculate where to position `See more` within the same paragraph instead of occupying another line. It is a drop-in replacement for `Text` component and you can control when to apply the see more functionality by configuring the `numberOfLines` prop.
+This package is different from regular see more/less components available out there. It's smart enough to calculate where to position `See more` within the same paragraph instead of occupying another line. It is a drop-in replacement for `Text` component and you can control when to apply the see more functionality by configuring the `numberOfLines` prop. Moreover, you can also pass your own custom implementation of `Text` component like `ParsedText` etc.
 
 ![Example](example/seemore.gif)
 
@@ -25,10 +25,10 @@ yarn add @fawazahmed/react-native-read-more
 | Prop | Type | Required | Note |
 |---|---|---|---|
 | `style` | `object or array` | no | text style
+| `seeMoreText` | `string` | no | defaults to `See more`
 | `seeMoreStyle` | `object or array` | no | text style for `See more` text
-| `seeMoreText` | `string` | no | defaults to `... See more`
-| `seeLessStyle` | `object or array` | no | text style for `See less` text
 | `seeLessText` | `string` | no | defaults to `See less`
+| `seeLessStyle` | `object or array` | no | text style for `See less` text
 | `wrapperStyle` | `object or array` | no | style for wrapper `View`
 | `numberOfLines` | `number` | no | defaults to `3`
 | `animate` | `bool` | no | defaults to `true` => applies a subtle animation to see more and see less text, not the complete text itself
