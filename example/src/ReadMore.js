@@ -3,10 +3,7 @@ import React, {
   useState,
   useEffect,
   useCallback,
-  Component,
-  PureComponent,
 } from 'react';
-import PropTypes from 'prop-types';
 import {
   StyleSheet,
   Text,
@@ -100,7 +97,7 @@ const ReadMore = memo(
       : {};
 
     return (
-      <View style={wrapperStyle}>
+      <TouchableOpacity style={wrapperStyle} onPress={toggle}>
         <TextComponent
           style={StyleSheet.flatten([
             Array.isArray(style) ? StyleSheet.flatten(style) : style,
@@ -120,7 +117,7 @@ const ReadMore = memo(
               onPress={toggle}
               style={[styles.seeMoreButton, {backgroundColor}]}>
               <TextComponent {...restProps} style={style}>
-                {'... '}
+                <Text>{"... "}</Text>
               </TextComponent>
               <Text style={seeMoreStyle}>{seeMoreText}</Text>
             </TouchableOpacity>
@@ -131,7 +128,7 @@ const ReadMore = memo(
             <Text style={seeLessStyle}>{seeLessText}</Text>
           </TouchableOpacity>
         )}
-      </View>
+      </TouchableOpacity>
     );
   },
 );
@@ -170,25 +167,6 @@ const styles = StyleSheet.create({
   },
 });
 
-ReadMore.propTypes = {
-  style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
-  seeMoreStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
-  seeLessStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
-  wrapperStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
-  children: PropTypes.any,
-  numberOfLines: PropTypes.number,
-  seeMoreText: PropTypes.string,
-  seeLessText: PropTypes.string,
-  animate: PropTypes.bool,
-  backgroundColor: PropTypes.string,
-  customTextComponent: PropTypes.oneOfType([
-    Component,
-    PureComponent,
-    memo,
-    PropTypes.func,
-    Text,
-  ]),
-};
 
 ReadMore.defaultProps = {
   style: styles.defaultText,
