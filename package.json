@@ -1,6 +1,6 @@
 {
   "name": "@fawazahmed/react-native-read-more",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "A simple react native library to show large blocks of text in a condensed manner with the ability to collapse and expand.",
   "main": "index.js",
   "scripts": {
@@ -25,7 +25,10 @@
     "android",
     "ui"
   ],
-  "author": "Fawaz Ahmed",
+  "author": {
+    "name": "Fawaz Ahmed",
+    "email": "fawaz_ahmed@live.com"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/fawaz-ahmed/react-native-read-more/issues"
@@ -33,5 +36,8 @@
   "homepage": "https://github.com/fawaz-ahmed/react-native-read-more#readme",
   "dependencies": {
     "prop-types": "^15.7.2"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
   }
 }
