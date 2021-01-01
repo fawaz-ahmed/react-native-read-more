@@ -186,9 +186,6 @@ const styles = StyleSheet.create({
   seeMoreButton: {
     flexDirection: 'row',
   },
-  seeLessContainer: {
-    paddingVertical: 4,
-  },
   defaultText: {},
   seeMoreText: {
     color: 'red',
@@ -197,9 +194,6 @@ const styles = StyleSheet.create({
   seeLessText: {
     color: 'red',
     fontWeight: 'bold',
-  },
-  hiddenText: {
-    color: 'transparent',
   },
 });
 
