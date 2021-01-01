@@ -4,7 +4,6 @@ import {
   StyleSheet,
   Text,
   View,
-  TouchableOpacity,
   LayoutAnimation,
   Platform,
   UIManager,
@@ -28,6 +27,7 @@ const ReadMore = ({
   animate,
   backgroundColor,
   customTextComponent: TextComponent,
+  ellipsis,
   ...restProps
 }) => {
   const [textHeight, setTextHeight] = useState(0);
@@ -35,6 +35,8 @@ const ReadMore = ({
   const [seeMore, setSeeMore] = useState(false);
   const [collapsed, setCollapsed] = useState(true);
   const [afterCollapsed, setAfterCollapsed] = useState(true);
+  const [measurednumberOfLines, setMeasurednumberOfLines] = useState(1);
+  const [numberOfLinesWithSeeLess, setNumberOfLinesWithSeeLess] = useState(1);
 
   const onTextLayout = useCallback(
     ({
@@ -56,6 +58,22 @@ const ReadMore = ({
       setHiddenTextHeight(height);
     },
     [setHiddenTextHeight],
+  );
+
+  const onHiddenSeeLessTextLayoutOne = useCallback(
+    (e) => {
+      const lines = e.nativeEvent?.lines?.length || 1;
+      setMeasurednumberOfLines(lines);
+    },
+    [setMeasurednumberOfLines],
+  );
+
+  const onHiddenSeeLessTextLayoutTwo = useCallback(
+    (e) => {
+      const lines = e.nativeEvent?.lines?.length || 1;
+      setNumberOfLinesWithSeeLess(lines);
+    },
+    [setNumberOfLinesWithSeeLess],
   );
 
   const toggle = useCallback(() => {
@@ -93,35 +111,56 @@ const ReadMore = ({
 
   return (
     <View style={wrapperStyle}>
+      {/* text component to measure see more position */}
       <TextComponent
         style={StyleSheet.flatten([
           Array.isArray(style) ? StyleSheet.flatten(style) : style,
-          styles.hiddenText,
+          styles.hiddenTextAbsolute,
         ])}
         numberOfLines={numberOfLines + 1}
         ellipsizeMode={'clip'}
         onLayout={onHiddenTextLayout}>
         {children || ''}
       </TextComponent>
+      {/* text component to measure number of lines */}
+      <TextComponent
+        style={StyleSheet.flatten([
+          Array.isArray(style) ? StyleSheet.flatten(style) : style,
+          styles.hiddenTextAbsolute,
+        ])}
+        onTextLayout={onHiddenSeeLessTextLayoutOne}>
+        {children || ''}
+      </TextComponent>
+      {/* text component to measure number of lines with see less */}
+      <TextComponent
+        style={StyleSheet.flatten([
+          Array.isArray(style) ? StyleSheet.flatten(style) : style,
+          styles.hiddenTextAbsolute,
+        ])}
+        onTextLayout={onHiddenSeeLessTextLayoutTwo}>
+        {children || ''}
+        {` ${seeLessText}`}
+      </TextComponent>
       <TextComponent {...restProps} style={style} {...textProps}>
         {children || ''}
+        {seeMore && !collapsed && (
+          <TextComponent {...restProps} onPress={toggle} style={seeLessStyle}>
+            {numberOfLinesWithSeeLess > measurednumberOfLines ? '\n' : ' '}
+            {seeLessText}
+          </TextComponent>
+        )}
       </TextComponent>
       {seeMore && collapsed && afterCollapsed && (
         <View style={styles.seeMoreContainer}>
-          <TouchableOpacity
-            onPress={toggle}
-            style={[styles.seeMoreButton, {backgroundColor}]}>
-            <TextComponent {...restProps} style={style}>
-              {'... '}
+          <View style={[styles.seeMoreButton, {backgroundColor}]}>
+            <TextComponent {...restProps} onPress={toggle} style={style}>
+              {ellipsis}{' '}
             </TextComponent>
-            <Text style={seeMoreStyle}>{seeMoreText}</Text>
-          </TouchableOpacity>
+            <Text onPress={toggle} style={seeMoreStyle}>
+              {seeMoreText}
+            </Text>
+          </View>
         </View>
-      )}
-      {seeMore && !collapsed && (
-        <TouchableOpacity onPress={toggle} style={styles.seeLessContainer}>
-          <Text style={seeLessStyle}>{seeLessText}</Text>
-        </TouchableOpacity>
       )}
     </View>
   );
@@ -131,7 +170,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
   },
-  hiddenText: {
+  hiddenTextAbsolute: {
     position: 'absolute',
     left: 0,
     right: 0,
@@ -146,9 +185,6 @@ const styles = StyleSheet.create({
   },
   seeMoreButton: {
     flexDirection: 'row',
-  },
-  seeLessContainer: {
-    paddingVertical: 4,
   },
   defaultText: {},
   seeMoreText: {
@@ -177,6 +213,7 @@ ReadMore.propTypes = {
     PropTypes.element,
     PropTypes.elementType,
   ]),
+  ellipsis: PropTypes.string,
 };
 
 ReadMore.defaultProps = {
@@ -191,6 +228,7 @@ ReadMore.defaultProps = {
   animate: true,
   backgroundColor: 'white',
   customTextComponent: Text,
+  ellipsis: '...',
 };
 
 export default memo(ReadMore);
