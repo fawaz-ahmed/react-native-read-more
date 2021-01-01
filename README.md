@@ -1,10 +1,6 @@
-[![Build status][travisci-image]][travisci-url] [![Coverage Status][coveralls-image]][coveralls-url] [![Quality Gate][quality-gate-image]][quality-gate-url]
+![NPM Downloads](https://img.shields.io/npm/dw/:@fawazahmed/react-native-read-more)
 
-[![NPM dependencies][npm-dependencies-image]][npm-dependencies-url] [![Last commit][last-commit-image]][last-commit-url] [![Last release][release-image]][release-url] 
-
-[![NPM downloads][npm-downloads-image]][npm-downloads-url] [![License][license-image]][license-url]
-
-### Please give it a star if you like it
+### Please :star::star::star: it if you like it
 # react-native-read-more
 React native library to show text in a condensed way and expand when needed. Can be used with native or expo on all platforms.
 
