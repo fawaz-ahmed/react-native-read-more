@@ -2,7 +2,7 @@
 React native library to show text in a condensed way and expand when needed. Can be used with native or expo on all platforms.
 
 # Why another library ?
-This package is different from regular see more/less components available out there. It's smart enough to calculate where to position `See more` within the same paragraph instead of occupying another line. It is a drop-in replacement for `Text` component and you can control when to apply the see more functionality by configuring the `numberOfLines` prop. Moreover, you can also pass your own custom implementation of `Text` component like `ParsedText` etc.
+This package is different from regular see more/less components available out there. It's smart enough to calculate where to position `See more` and `See less` within the same paragraph instead of occupying another line. It is a drop-in replacement for `Text` component and you can control when to apply the see more functionality by configuring the `numberOfLines` prop. Moreover, you can also pass your own custom implementation of `Text` component like `ParsedText` etc.
 
 ![Example](example/seemore.gif)
 
