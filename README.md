@@ -1,13 +1,13 @@
+![NPM Downloads](https://img.shields.io/npm/dw/@fawazahmed/react-native-read-more) ![NPM License](https://img.shields.io/npm/l/@fawazahmed/react-native-read-more) ![NPM Version](https://img.shields.io/npm/v/@fawazahmed/react-native-read-more)
+
+#### Please :star: it, thanks :thumbsup:
 # react-native-read-more
 React native library to show text in a condensed way and expand when needed. Can be used with native or expo on all platforms.
 
-# Why another library ?
-This package is different from regular see more/less components available out there. It's smart enough to calculate where to position `See more` and `See less` within the same paragraph instead of occupying another line. It is a drop-in replacement for `Text` component and you can control when to apply the see more functionality by configuring the `numberOfLines` prop. Moreover, you can also pass your own custom implementation of `Text` component like `ParsedText` etc.
-
 ![Example](example/seemore.gif)
 
-## Seeing issues ?
-Create an issue with github or drop an email to `fawaz_ahmed@live.com`.
+# Why another library ?
+This package is different from regular see more/less components available out there. It's smart enough to calculate where to position `See more` and `See less` within the same paragraph instead of occupying another line. It is a drop-in replacement for `Text` component and you can control when to apply the see more functionality by configuring the `numberOfLines` prop. Moreover, you can also pass your own custom implementation of `Text` component like `ParsedText` etc.
 
 ### Installation
 
@@ -66,3 +66,6 @@ const styles = StyleSheet.create({
 
 export default App;
 ```
+
+## Seeing issues ?
+Create an issue with github.
