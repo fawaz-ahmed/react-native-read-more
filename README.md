@@ -29,6 +29,7 @@ yarn add @fawazahmed/react-native-read-more
 | `seeMoreStyle` | `object or array` | no | text style for `See more` text
 | `seeLessText` | `string` | no | defaults to `See less`
 | `seeLessStyle` | `object or array` | no | text style for `See less` text
+| `ellipsis` | `string` | no | defaults to `...`
 | `wrapperStyle` | `object or array` | no | style for wrapper `View`
 | `numberOfLines` | `number` | no | defaults to `3`
 | `animate` | `bool` | no | defaults to `true` => applies a subtle animation to see more and see less text, not the complete text itself
