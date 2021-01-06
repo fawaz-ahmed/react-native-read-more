@@ -24,7 +24,7 @@ yarn add @fawazahmed/react-native-read-more
 
 import React from 'react';
 import {SafeAreaView, StyleSheet, View} from 'react-native';
-import ReadMore from './src/ReadMore';
+import ReadMore from '@fawazahmed/react-native-read-more';
 
 const Home = () => {
   return (
