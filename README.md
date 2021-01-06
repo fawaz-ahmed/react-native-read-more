@@ -6,9 +6,6 @@ React native library to show text in a condensed way and expand when needed. Can
 
 ![Example](example/seemore.gif)
 
-# Why another library ?
-This package is different from regular see more/less components available out there. It's smart enough to calculate where to position `See more` and `See less` within the same paragraph instead of occupying another line. It is a drop-in replacement for `Text` component and you can control when to apply the see more functionality by configuring the `numberOfLines` prop. Moreover, you can also pass your own custom implementation of `Text` component like `ParsedText` etc.
-
 ### Installation
 
 ```
@@ -20,6 +17,46 @@ or with yarn
 ```
 yarn add @fawazahmed/react-native-read-more
 ```
+
+### Usage
+
+```javascript
+
+import React from 'react';
+import {SafeAreaView, StyleSheet, View} from 'react-native';
+import ReadMore from './src/ReadMore';
+
+const Home = () => {
+  return (
+    <SafeAreaView style={styles.safe}>
+      <View style={styles.root}>
+        <ReadMore numberOfLines={3} style={styles.textStyle}>
+          {
+            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+          }
+        </ReadMore>
+      </View>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  safe: {
+    flex: 1,
+  },
+  root: {
+    flex: 1,
+    padding: 16,
+  },
+  textStyle: {
+    fontSize: 14,
+  },
+});
+
+export default Home;
+
+```
+
 ## Props
 
 | Prop | Type | Required | Note |
@@ -38,34 +75,21 @@ yarn add @fawazahmed/react-native-read-more
 
 Any additional props are passed down to underlying `Text` component.
 
-### Usage
-
-```javascript
-
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import ReadMore from '@fawazahmed/react-native-read-more';
-
-const App = () => {
-  return (
-    <View style={styles.root}>
-      <ReadMore>
-        {`Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.`}
-      </ReadMore>
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    padding: 16,
-    marginTop: 48,
-  },
-});
-
-export default App;
+# Run example
 ```
+git clone https://github.com/fawaz-ahmed/react-native-read-more.git
+cd react-native-read-more/example
+yarn install # or npm install
+
+# to run on iOS
+yarn ios
+
+#to run on android
+yarn android
+```
+
+# Why another library ?
+This module will calculate where to position `See more` and `See less` within the same paragraph instead of occupying another line. It is a drop-in replacement for `Text` component and you can control when to apply the see more functionality by configuring the `numberOfLines` prop. Moreover, you can also pass your own custom implementation of `Text` component like `ParsedText` etc.
 
 ## Seeing issues ?
 Create an issue with github.

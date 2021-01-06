@@ -32,11 +32,15 @@ const ReadMore = ({
 }) => {
   const [textHeight, setTextHeight] = useState(0);
   const [hiddenTextHeight, setHiddenTextHeight] = useState(0);
+  const [
+    hiddenTextHeightWithSeeLess,
+    setHiddenTextHeightWithSeeLess,
+  ] = useState(0);
+  const [mountHiddenTextOne, setMountHiddenTextOne] = useState(true);
+  const [mountHiddenTextTwo, setMountHiddenTextTwo] = useState(true);
   const [seeMore, setSeeMore] = useState(false);
   const [collapsed, setCollapsed] = useState(true);
   const [afterCollapsed, setAfterCollapsed] = useState(true);
-  const [measurednumberOfLines, setMeasurednumberOfLines] = useState(1);
-  const [numberOfLinesWithSeeLess, setNumberOfLinesWithSeeLess] = useState(1);
 
   const onTextLayout = useCallback(
     ({
@@ -56,24 +60,21 @@ const ReadMore = ({
       },
     }) => {
       setHiddenTextHeight(height);
+      setMountHiddenTextOne(false);
     },
-    [setHiddenTextHeight],
-  );
-
-  const onHiddenSeeLessTextLayoutOne = useCallback(
-    (e) => {
-      const lines = e.nativeEvent?.lines?.length || 1;
-      setMeasurednumberOfLines(lines);
-    },
-    [setMeasurednumberOfLines],
+    [setHiddenTextHeight, setMountHiddenTextOne],
   );
 
   const onHiddenSeeLessTextLayoutTwo = useCallback(
-    (e) => {
-      const lines = e.nativeEvent?.lines?.length || 1;
-      setNumberOfLinesWithSeeLess(lines);
+    ({
+      nativeEvent: {
+        layout: {height},
+      },
+    }) => {
+      setHiddenTextHeightWithSeeLess(height);
+      setMountHiddenTextTwo(false);
     },
-    [setNumberOfLinesWithSeeLess],
+    [setHiddenTextHeightWithSeeLess, setMountHiddenTextTwo],
   );
 
   const toggle = useCallback(() => {
@@ -101,6 +102,21 @@ const ReadMore = ({
     setAfterCollapsed(collapsed);
   }, [collapsed]);
 
+  useEffect(() => {
+    setMountHiddenTextOne(true);
+    setMountHiddenTextTwo(true);
+  }, [
+    numberOfLines,
+    style,
+    wrapperStyle,
+    children,
+    seeMoreStyle,
+    seeMoreText,
+    seeLessStyle,
+    seeLessText,
+    ellipsis,
+  ]);
+
   const textProps = collapsed
     ? {
         onLayout: onTextLayout,
@@ -111,55 +127,47 @@ const ReadMore = ({
 
   return (
     <View style={wrapperStyle}>
-      {/* text component to measure see more position */}
-      <TextComponent
-        style={StyleSheet.flatten([
-          Array.isArray(style) ? StyleSheet.flatten(style) : style,
-          styles.hiddenTextAbsolute,
-        ])}
-        numberOfLines={numberOfLines + 1}
-        ellipsizeMode={'clip'}
-        onLayout={onHiddenTextLayout}>
-        {children || ''}
-      </TextComponent>
-      {/* text component to measure number of lines */}
-      <TextComponent
-        style={StyleSheet.flatten([
-          Array.isArray(style) ? StyleSheet.flatten(style) : style,
-          styles.hiddenTextAbsolute,
-        ])}
-        onTextLayout={onHiddenSeeLessTextLayoutOne}>
-        {children || ''}
-      </TextComponent>
-      {/* text component to measure number of lines with see less */}
-      <TextComponent
-        style={StyleSheet.flatten([
-          Array.isArray(style) ? StyleSheet.flatten(style) : style,
-          styles.hiddenTextAbsolute,
-        ])}
-        onTextLayout={onHiddenSeeLessTextLayoutTwo}>
-        {children || ''}
-        {` ${seeLessText}`}
-      </TextComponent>
+      {/* text component to measure see if see more is applicable and get height */}
+      {mountHiddenTextOne && (
+        <TextComponent
+          style={StyleSheet.flatten([
+            Array.isArray(style) ? StyleSheet.flatten(style) : style,
+            styles.hiddenTextAbsolute,
+          ])}
+          ellipsizeMode={'clip'}
+          onLayout={onHiddenTextLayout}>
+          {children || ''}
+        </TextComponent>
+      )}
+      {/* text component to measure height with see less */}
+      {mountHiddenTextTwo && (
+        <TextComponent
+          style={StyleSheet.flatten([
+            Array.isArray(style) ? StyleSheet.flatten(style) : style,
+            styles.hiddenTextAbsolute,
+          ])}
+          onLayout={onHiddenSeeLessTextLayoutTwo}>
+          {children || ''}
+          {` ${seeLessText}`}
+        </TextComponent>
+      )}
       <TextComponent {...restProps} style={style} {...textProps}>
         {children || ''}
         {seeMore && !collapsed && (
           <TextComponent {...restProps} onPress={toggle} style={seeLessStyle}>
-            {numberOfLinesWithSeeLess > measurednumberOfLines ? '\n' : ' '}
+            {hiddenTextHeightWithSeeLess > hiddenTextHeight ? '\n' : ' '}
             {seeLessText}
           </TextComponent>
         )}
       </TextComponent>
       {seeMore && collapsed && afterCollapsed && (
-        <View style={styles.seeMoreContainer}>
-          <View style={[styles.seeMoreButton, {backgroundColor}]}>
-            <TextComponent {...restProps} onPress={toggle} style={style}>
-              {ellipsis}{' '}
-            </TextComponent>
-            <Text onPress={toggle} style={seeMoreStyle}>
-              {seeMoreText}
-            </Text>
-          </View>
+        <View style={[styles.seeMoreContainer, {backgroundColor}]}>
+          <TextComponent
+            {...restProps}
+            onPress={toggle}
+            style={[style, seeMoreStyle]}>
+            {`${ellipsis} ${seeMoreText}`}
+          </TextComponent>
         </View>
       )}
     </View>
