@@ -91,5 +91,8 @@ yarn android
 # Why another library ?
 This module will calculate where to position `See more` and `See less` within the same paragraph instead of occupying another line. It is a drop-in replacement for `Text` component and you can control when to apply the see more functionality by configuring the `numberOfLines` prop. Moreover, you can also pass your own custom implementation of `Text` component like `ParsedText` etc.
 
-## Seeing issues ?
-Create an issue with github.
+## Seeing issues or any feedback or feature suggest ?
+Create an ![issue](https://github.com/fawaz-ahmed/react-native-read-more/issues) with github.
+
+## Troubleshooting
+- If you observe `See more` shown always in android, pass prop `allowFontScaling={false}`, refer to this ![issue](https://github.com/fawaz-ahmed/react-native-read-more/issues/17)
