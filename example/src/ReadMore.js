@@ -28,6 +28,7 @@ const ReadMore = ({
   backgroundColor,
   customTextComponent: TextComponent,
   ellipsis,
+  allowFontScaling,
   ...restProps
 }) => {
   const [textHeight, setTextHeight] = useState(0);
@@ -115,6 +116,7 @@ const ReadMore = ({
     seeLessStyle,
     seeLessText,
     ellipsis,
+    allowFontScaling,
   ]);
 
   const textProps = collapsed
@@ -125,11 +127,17 @@ const ReadMore = ({
       }
     : {};
 
+  const additionalProps = {};
+  if (allowFontScaling !== undefined) {
+    additionalProps.allowFontScaling = allowFontScaling;
+  }
+
   return (
     <View style={wrapperStyle}>
       {/* text component to measure see if see more is applicable and get height */}
       {mountHiddenTextOne && (
         <TextComponent
+          {...additionalProps}
           style={StyleSheet.flatten([
             Array.isArray(style) ? StyleSheet.flatten(style) : style,
             styles.hiddenTextAbsolute,
@@ -142,6 +150,7 @@ const ReadMore = ({
       {/* text component to measure height with see less */}
       {mountHiddenTextTwo && (
         <TextComponent
+          {...additionalProps}
           style={StyleSheet.flatten([
             Array.isArray(style) ? StyleSheet.flatten(style) : style,
             styles.hiddenTextAbsolute,
@@ -151,10 +160,18 @@ const ReadMore = ({
           {` ${seeLessText}`}
         </TextComponent>
       )}
-      <TextComponent {...restProps} style={style} {...textProps}>
+      <TextComponent
+        {...additionalProps}
+        {...restProps}
+        style={style}
+        {...textProps}>
         {children || ''}
         {seeMore && !collapsed && (
-          <TextComponent {...restProps} onPress={toggle} style={seeLessStyle}>
+          <TextComponent
+            {...additionalProps}
+            {...restProps}
+            onPress={toggle}
+            style={seeLessStyle}>
             {hiddenTextHeightWithSeeLess > hiddenTextHeight ? '\n' : ' '}
             {seeLessText}
           </TextComponent>
@@ -163,6 +180,7 @@ const ReadMore = ({
       {seeMore && collapsed && afterCollapsed && (
         <View style={[styles.seeMoreContainer, {backgroundColor}]}>
           <TextComponent
+            {...additionalProps}
             {...restProps}
             onPress={toggle}
             style={[style, seeMoreStyle]}>
@@ -222,6 +240,7 @@ ReadMore.propTypes = {
     PropTypes.elementType,
   ]),
   ellipsis: PropTypes.string,
+  allowFontScaling: PropTypes.bool,
 };
 
 ReadMore.defaultProps = {
