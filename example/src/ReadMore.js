@@ -15,6 +15,12 @@ if (Platform.OS === 'android') {
   }
 }
 
+const readmoreAnimation = LayoutAnimation.create(
+  300,
+  LayoutAnimation.Types.easeInEaseOut,
+  LayoutAnimation.Properties.opacity,
+);
+
 const ReadMore = ({
   numberOfLines,
   style,
@@ -29,6 +35,9 @@ const ReadMore = ({
   customTextComponent: TextComponent,
   ellipsis,
   allowFontScaling,
+  onExpand,
+  onCollapse,
+  expandOnly,
   ...restProps
 }) => {
   const [textHeight, setTextHeight] = useState(0);
@@ -80,16 +89,7 @@ const ReadMore = ({
 
   const toggle = useCallback(() => {
     setCollapsed((prev) => !prev);
-    if (animate) {
-      LayoutAnimation.configureNext(
-        LayoutAnimation.create(
-          300,
-          LayoutAnimation.Types.linear,
-          LayoutAnimation.Properties.opacity,
-        ),
-      );
-    }
-  }, [setCollapsed, animate]);
+  }, [setCollapsed]);
 
   useEffect(() => {
     if (!hiddenTextHeight || !textHeight) {
@@ -100,7 +100,18 @@ const ReadMore = ({
   }, [textHeight, hiddenTextHeight]);
 
   useEffect(() => {
+    if (collapsed === afterCollapsed) {
+      return;
+    }
+
+    const callback = collapsed ? onCollapse : onExpand;
     setAfterCollapsed(collapsed);
+    if (animate) {
+      LayoutAnimation.configureNext(readmoreAnimation, callback);
+    } else {
+      callback();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [collapsed]);
 
   useEffect(() => {
@@ -119,7 +130,7 @@ const ReadMore = ({
     allowFontScaling,
   ]);
 
-  const textProps = collapsed
+  const textProps = afterCollapsed
     ? {
         onLayout: onTextLayout,
         numberOfLines,
@@ -166,7 +177,7 @@ const ReadMore = ({
         style={style}
         {...textProps}>
         {children || ''}
-        {seeMore && !collapsed && (
+        {seeMore && !collapsed && !expandOnly && (
           <TextComponent
             {...additionalProps}
             {...restProps}
@@ -241,6 +252,9 @@ ReadMore.propTypes = {
   ]),
   ellipsis: PropTypes.string,
   allowFontScaling: PropTypes.bool,
+  onExpand: PropTypes.func,
+  onCollapse: PropTypes.func,
+  expandOnly: PropTypes.bool,
 };
 
 ReadMore.defaultProps = {
@@ -256,6 +270,9 @@ ReadMore.defaultProps = {
   backgroundColor: 'white',
   customTextComponent: Text,
   ellipsis: '...',
+  onExpand: () => {},
+  onCollapse: () => {},
+  expandOnly: false,
 };
 
 export default memo(ReadMore);

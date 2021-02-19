@@ -72,6 +72,9 @@ export default Home;
 | `animate` | `bool` | no | defaults to `true` => applies a subtle animation to see more and see less text, not the complete text itself
 | `backgroundColor` | `string` | no | defaults to `white` => supply `backgroundColor` if your background color is something other than white
 | `customTextComponent` | `React component` | no | defaults to `Text`
+| `expandOnly` | `bool` | no | defaults to `false` => hide See less similar to linkedIn post
+| `onExpand` | `func` | no | optional callback executed when expanded
+| `onCollaps` | `func` | no | optional callback executed when collapsed
 
 Any additional props are passed down to underlying `Text` component.
 
