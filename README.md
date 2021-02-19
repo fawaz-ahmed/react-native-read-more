@@ -96,3 +96,15 @@ Create an [issue](https://github.com/fawaz-ahmed/react-native-read-more/issues) 
 
 ## Troubleshooting
 - If you observe `See more` shown always in android, pass prop `allowFontScaling={false}`, refer to this [issue](https://github.com/fawaz-ahmed/react-native-read-more/issues/17)
+
+### jest - running unit tests
+This package is not transpiled. So inorder for your test cases to work, this package should be transpiled by babel. For this you to add this path `"!node_modules/@fawazahmed/react-native-read-more/"` under `transformIgnorePatterns` option provided by `jest`. In your `package.json` you will see this `jest` config:
+```
+"jest": {
+  "preset": "react-native",
+  "transformIgnorePatterns": [
+    "!node_modules/@fawazahmed/react-native-read-more/" // add this line
+  ]
+}
+```
+refer to jest docs [here](https://jestjs.io/docs/en/tutorial-react-native#transformignorepatterns-customization) and github [issue](https://github.com/fawaz-ahmed/react-native-read-more/issues/19)
