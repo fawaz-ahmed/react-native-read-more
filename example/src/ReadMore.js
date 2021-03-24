@@ -396,7 +396,6 @@ const ReadMore = ({
   }, [truncatedLineOfImpact]);
 
   useEffect(() => {
-    console.log('padding', truncatedLineOfImpactWidth, seeMoreWidth, textWidth);
     if (!truncatedLineOfImpactWidth || !seeMoreWidth || !textWidth) {
       setSeeMoreRightPadding(0);
       return;
