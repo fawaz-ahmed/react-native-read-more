@@ -1,7 +1,7 @@
 import React from 'react';
 
-const getStringChild = (child) => {
-  const content = child?.split('\n').join('');
+const getStringChild = (child, preserveLinebreaks = false) => {
+  const content = preserveLinebreaks ? child : child?.split('\n').join(' ');
   return {
     type: 'string',
     content,
@@ -9,8 +9,8 @@ const getStringChild = (child) => {
   };
 };
 
-const getTextChild = (child) => {
-  const content = child.props.children?.split('\n').join('');
+const getTextChild = (child, preserveLinebreaks = false) => {
+  const content = preserveLinebreaks ? child.props.children : child.props.children?.split('\n').join(' ');
   return {
     type: child?.type?.displayName,
     content,
@@ -18,9 +18,9 @@ const getTextChild = (child) => {
   };
 };
 
-export const getText = (children, TextComponent) => {
+export const getText = (children, TextComponent, preserveLinebreaks) => {
   if (typeof children === 'string') {
-    return [getStringChild(children)];
+    return [getStringChild(children, preserveLinebreaks)];
   }
 
   if (Array.isArray(children)) {
@@ -33,7 +33,7 @@ export const getText = (children, TextComponent) => {
       })
       .map((_child) => {
         if (typeof _child === 'string') {
-          return getStringChild(_child);
+          return getStringChild(_child, preserveLinebreaks);
         }
 
         return getTextChild(_child);
@@ -43,13 +43,13 @@ export const getText = (children, TextComponent) => {
   return null;
 };
 
-export const childrenToText = (children, TextComponent) => {
-  const _textChildren = getText(children, TextComponent);
+export const childrenToText = (children, TextComponent, preserveLinebreaks) => {
+  const _textChildren = getText(children, TextComponent, preserveLinebreaks);
   return _textChildren.map((_t) => _t.content).join(' ');
 };
 
-export const childrenToTextChildren = (children, TextComponent) => {
-  const _textChildren = getText(children, TextComponent);
+export const childrenToTextChildren = (children, TextComponent, preserveLinebreaks) => {
+  const _textChildren = getText(children, TextComponent, preserveLinebreaks);
   return _textChildren.map((_t) => _t.child);
 };
 

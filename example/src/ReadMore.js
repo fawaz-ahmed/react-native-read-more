@@ -47,6 +47,7 @@ const ReadMore = ({
   expandOnly,
   seeMoreOverlapCount,
   debounceSeeMoreCalc,
+  preserveLinebreaks,
   ...restProps
 }) => {
   const [additionalProps, setAdditionalProps] = useState({});
@@ -82,7 +83,7 @@ const ReadMore = ({
   const [afterCollapsed, setAfterCollapsed] = useState(true);
   // copy of children with only text
   const [collapsedChildren, setCollapsedChildren] = useState(
-    childrenToTextChildren(children, TextComponent),
+    childrenToTextChildren(children, TextComponent, preserveLinebreaks),
   );
   const [measuredCollapsedChildren, setMeasuredCollapsedChildren] = useState(
     null,
@@ -202,7 +203,7 @@ const ReadMore = ({
     // go to this position and insert a line break
     let charactersToTraverse = textBreakPosition;
     let nodeFound = false;
-    const modifiedChildrenObjects = getText(children, TextComponent).map(
+    const modifiedChildrenObjects = getText(children, TextComponent, preserveLinebreaks).map(
       (_childObject) => {
         if (nodeFound) {
           return _childObject;
@@ -381,7 +382,7 @@ const ReadMore = ({
   }, [measureSeeMoreLine]);
 
   useEffect(() => {
-    const _textChildren = childrenToTextChildren(children, TextComponent);
+    const _textChildren = childrenToTextChildren(children, TextComponent, preserveLinebreaks);
     setCollapsedChildren(_textChildren);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [children]);
@@ -395,7 +396,6 @@ const ReadMore = ({
   }, [truncatedLineOfImpact]);
 
   useEffect(() => {
-    console.log('padding', truncatedLineOfImpactWidth, seeMoreWidth, textWidth);
     if (!truncatedLineOfImpactWidth || !seeMoreWidth || !textWidth) {
       setSeeMoreRightPadding(0);
       return;
@@ -566,6 +566,7 @@ ReadMore.propTypes = {
   expandOnly: PropTypes.bool,
   seeMoreOverlapCount: PropTypes.number,
   debounceSeeMoreCalc: PropTypes.number,
+  preserveLinebreaks: PropTypes.bool,
 };
 
 ReadMore.defaultProps = {
@@ -586,6 +587,7 @@ ReadMore.defaultProps = {
   expandOnly: false,
   seeMoreOverlapCount: 1,
   debounceSeeMoreCalc: 300,
+  preserveLinebreaks: false,
 };
 
 export default memo(ReadMore);
