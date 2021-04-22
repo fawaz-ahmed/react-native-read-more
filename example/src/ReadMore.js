@@ -65,9 +65,11 @@ const ReadMore = ({
   const [lineOfImpact, setLineOfImpact] = useState({});
   const [lines, setLines] = useState([]);
   const [truncatedLineOfImpact, setTruncatedLineOfImpact] = useState('');
-  const [truncatedLineOfImpactWidth, setTruncatedLineOfImpactWidth] = useState(
-    0,
-  );
+  // eslint-disable-next-line prettier/prettier
+  const [truncatedLineOfImpactWidth, setTruncatedLineOfImpactWidth] = useState(0);
+  const [reconciledLineOfImpact, setReconciledLineOfImpact] = useState('');
+  // eslint-disable-next-line prettier/prettier
+  const [reconciledLineOfImpactWidth, setReconciledLineOfImpactWidth] = useState(0);
   const [seeMoreRightPadding, setSeeMoreRightPadding] = useState(0);
   // mount or unmount hidden components
   const [mountHiddenTextOne, setMountHiddenTextOne] = useState(true);
@@ -75,8 +77,11 @@ const ReadMore = ({
   const [mountHiddenTextThree, setMountHiddenTextThree] = useState(true);
   const [mountHiddenTextFour, setMountHiddenTextFour] = useState(true);
   const [mountHiddenTextFive, setMountHiddenTextFive] = useState(false);
+  const [mountHiddenTextSix, setMountHiddenTextSix] = useState(false);
+  const [mountHiddenTextSeven, setMountHiddenTextSeven] = useState(false);
   // initial measurement is in progress
   const [isMeasuring, setIsMeasuring] = useState(true);
+  const [isMeasured, setIsMeasured] = useState(false);
   // logic decisioning params
   const [seeMore, setSeeMore] = useState(false);
   const [collapsed, setCollapsed] = useState(true);
@@ -100,6 +105,30 @@ const ReadMore = ({
       setSeeMoreWidth(width);
     },
     [setSeeMoreWidth],
+  );
+
+  const onLayoutHiddenTextSeven = useCallback(
+    ({
+      nativeEvent: {
+        layout: {width},
+      },
+    }) => {
+      setMountHiddenTextSeven(false);
+      setReconciledLineOfImpactWidth(width);
+    },
+    [setReconciledLineOfImpactWidth, setMountHiddenTextSeven],
+  );
+
+  const onLayoutHiddenTextSix = useCallback(() => {
+    setMountHiddenTextSix(false);
+  }, [setMountHiddenTextSix]);
+
+  const onTextLayoutHiddenTextSix = useCallback(
+    ({nativeEvent: {lines: _lines}}) => {
+      const _lineOfImpact = _lines[numberOfLines - 1];
+      setReconciledLineOfImpact(_lineOfImpact?.text || '');
+    },
+    [numberOfLines, setReconciledLineOfImpact],
   );
 
   const onLayoutHiddenTextFive = useCallback(
@@ -192,6 +221,7 @@ const ReadMore = ({
     const charactersLengthTillSeeMore = charactersBeforeSeeMore.trim().length;
     const seeMoreTextLength =
       `${ellipsis} ${seeMoreText}`.length + seeMoreOverlapCount;
+    // text break position for collapsed text
     const textBreakPosition = charactersLengthTillSeeMore - seeMoreTextLength;
     const trimmedLineOfImpact = lineOfImpact.text.trim();
     const _truncatedLineOfImpact = trimmedLineOfImpact.substring(
@@ -203,38 +233,39 @@ const ReadMore = ({
     // go to this position and insert a line break
     let charactersToTraverse = textBreakPosition;
     let nodeFound = false;
-    const modifiedChildrenObjects = getText(children, TextComponent, preserveLinebreaks).map(
-      (_childObject) => {
-        if (nodeFound) {
-          return _childObject;
-        }
-        if (_childObject.content.length > charactersToTraverse) {
-          // this node is the one
-          nodeFound = true;
-          const childContent = insertAt(
-            _childObject.content,
-            '\n',
-            charactersToTraverse,
-          );
-          return {
-            type: _childObject?.type,
-            content: childContent,
-            child:
-              _childObject?.type === 'string'
-                ? childContent
-                : React.cloneElement(
-                    _childObject,
-                    _childObject.props,
-                    childContent,
-                  ),
-          };
-        }
-        charactersToTraverse =
-          charactersToTraverse - _childObject.content.length;
-
+    const modifiedChildrenObjects = getText(
+      children,
+      TextComponent,
+      preserveLinebreaks,
+    ).map((_childObject) => {
+      if (nodeFound) {
         return _childObject;
-      },
-    );
+      }
+      if (_childObject.content.length > charactersToTraverse) {
+        // this node is the one
+        nodeFound = true;
+        const childContent = insertAt(
+          _childObject.content,
+          '\n',
+          charactersToTraverse,
+        );
+        return {
+          type: _childObject?.type,
+          content: childContent,
+          child:
+            _childObject?.type === 'string'
+              ? childContent
+              : React.cloneElement(
+                  _childObject,
+                  _childObject.props,
+                  childContent,
+                ),
+        };
+      }
+      charactersToTraverse = charactersToTraverse - _childObject.content.length;
+
+      return _childObject;
+    });
 
     if (nodeFound) {
       return setMeasuredCollapsedChildren(
@@ -255,6 +286,7 @@ const ReadMore = ({
     ellipsis,
     seeMoreText,
     seeMoreOverlapCount,
+    preserveLinebreaks,
   ]);
 
   const textProps = afterCollapsed
@@ -282,6 +314,7 @@ const ReadMore = ({
 
   const seeMoreBackgroundStyle =
     isMeasuring || lineOfImpact?.text ? {} : {backgroundColor};
+  const seeMoreTextHidingStyle = isMeasured ? {} : {color: 'transparent'};
   const seeMoreContainerStyle = [
     styles.seeMoreContainer,
     seeMoreBackgroundStyle,
@@ -382,7 +415,11 @@ const ReadMore = ({
   }, [measureSeeMoreLine]);
 
   useEffect(() => {
-    const _textChildren = childrenToTextChildren(children, TextComponent, preserveLinebreaks);
+    const _textChildren = childrenToTextChildren(
+      children,
+      TextComponent,
+      preserveLinebreaks,
+    );
     setCollapsedChildren(_textChildren);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [children]);
@@ -410,6 +447,54 @@ const ReadMore = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [truncatedLineOfImpactWidth, seeMoreWidth, textWidth]);
+
+  useEffect(() => {
+    if (!measuredCollapsedChildren) {
+      return;
+    }
+
+    // start reconciliation
+    setMountHiddenTextSix(true);
+  }, [measuredCollapsedChildren]);
+
+  useEffect(() => {
+    if (!reconciledLineOfImpact) {
+      return;
+    }
+
+    setMountHiddenTextSeven(true);
+  }, [reconciledLineOfImpact]);
+
+  useEffect(() => {
+    if (!reconciledLineOfImpactWidth || !seeMoreWidth || !textWidth) {
+      // setSeeMoreRightPadding(0);
+      return;
+    }
+    const _seeMoreRightPadding =
+      textWidth - reconciledLineOfImpactWidth - seeMoreWidth;
+    if (_seeMoreRightPadding > 0) {
+      setSeeMoreRightPadding(_seeMoreRightPadding);
+      if (animate) {
+        LayoutAnimation.configureNext(readmoreAnimation);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reconciledLineOfImpactWidth, seeMoreWidth, textWidth]);
+
+  useEffect(() => {
+    if (isMeasuring) {
+      return;
+    }
+
+    const handle = setTimeout(() => {
+      setIsMeasured(!isMeasuring);
+      if (animate) {
+        LayoutAnimation.configureNext(readmoreAnimation);
+      }
+    }, debounceSeeMoreCalc);
+    return () => clearTimeout(handle);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMeasuring]);
 
   return (
     <View style={wrapperStyle}>
@@ -461,6 +546,25 @@ const ReadMore = ({
           {truncatedLineOfImpact}
         </TextComponent>
       )}
+      {/* extract line of impact with measured children */}
+      {mountHiddenTextSix && (
+        <TextComponent
+          {...commonHiddenComponentProps}
+          numberOfLines={numberOfLines + 1}
+          onLayout={onLayoutHiddenTextSix}
+          onTextLayout={onTextLayoutHiddenTextSix}>
+          {measuredCollapsedChildren || ''}
+          {/* no see less here since it's in collapsed state replicating original component */}
+        </TextComponent>
+      )}
+      {/* extract width of reconciled line of impact without see more line */}
+      {mountHiddenTextSeven && (
+        <TextComponent
+          {...hiddenComponentPropsLineOfImpact}
+          onLayout={onLayoutHiddenTextSeven}>
+          {reconciledLineOfImpact}
+        </TextComponent>
+      )}
       {/* actual text component */}
       <TextComponent
         {...additionalProps}
@@ -482,7 +586,7 @@ const ReadMore = ({
         )}
       </TextComponent>
       {/* See more component */}
-      {seeMore && collapsed && !!collapsedChildren && !isMeasuring && (
+      {seeMore && collapsed && afterCollapsed && (
         <View style={seeMoreContainerStyle} onLayout={onSeeMoreViewLayout}>
           <TextComponent
             {...additionalProps}
@@ -495,7 +599,7 @@ const ReadMore = ({
             {...additionalProps}
             {...restProps}
             onPress={toggle}
-            style={[style, seeMoreStyle]}>
+            style={[style, seeMoreStyle, seeMoreTextHidingStyle]}>
             {` ${seeMoreText}`}
           </TextComponent>
         </View>
@@ -507,6 +611,7 @@ const ReadMore = ({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
+    overflow: 'hidden',
   },
   hiddenTextAbsolute: {
     position: 'absolute',
@@ -588,6 +693,10 @@ ReadMore.defaultProps = {
   seeMoreOverlapCount: 1,
   debounceSeeMoreCalc: 300,
   preserveLinebreaks: false,
+  allowFontScaling: Platform.select({
+    android: false,
+    ios: undefined,
+  }),
 };
 
 export default memo(ReadMore);
