@@ -12,3 +12,6 @@ node_modules
 yarn.lock
 
 .DS_*
+
+example/ios/example.xcworkspace/xcshareddata
+example/src/test_image_*

@@ -10,7 +10,9 @@ const getStringChild = (child, preserveLinebreaks = false) => {
 };
 
 const getTextChild = (child, preserveLinebreaks = false) => {
-  const content = preserveLinebreaks ? child.props.children : child.props.children?.split('\n').join(' ');
+  const content = preserveLinebreaks
+    ? child.props.children
+    : child.props.children?.split('\n').join(' ');
   return {
     type: child?.type?.displayName,
     content,
@@ -58,7 +60,7 @@ export const childrenObjectsToChildren = (childrenObjects) => {
 };
 
 export const linesToCharacters = (lines) => {
-  return lines.map((_line) => _line?.text || '').join('');
+  return lines.map((_line) => _line?.text || '').join(' ');
 };
 
 export const insertAt = (str, sub, pos) =>

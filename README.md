@@ -1,7 +1,5 @@
 ![NPM Downloads](https://img.shields.io/npm/dw/@fawazahmed/react-native-read-more) ![NPM License](https://img.shields.io/npm/l/@fawazahmed/react-native-read-more) ![NPM Version](https://img.shields.io/npm/v/@fawazahmed/react-native-read-more)
 
-### Imp: v2.0.0 is exprimental, if you see issues please report as gituhb issue and downgrade to v1.1.5
-
 #### Please :star: it, thanks :thumbsup:
 # react-native-read-more
 React native library to show text in a condensed way and expand when needed. Can be used with native or expo on all platforms.
@@ -77,7 +75,7 @@ export default Home;
 | `expandOnly` | `bool` | no | defaults to `false` => hide see less option similar to a linkedIn post
 | `onExpand` | `func` | no | optional callback executed when expanded
 | `onCollapse` | `func` | no | optional callback executed when collapsed
-| `preserveLinebreaks` | `bool` | no | defaults to `false` => preserves `\n` in the content while in the collapsed state 
+| `preserveLinebreaks` | `bool` | no | defaults to `false` => preserves `\n` in the content while in the collapsed state. This prop is in experimental stage.
 
 Any additional props are passed down to underlying `Text` component.
 
