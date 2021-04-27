@@ -50,7 +50,11 @@ export const childrenToText = (children, TextComponent, preserveLinebreaks) => {
   return _textChildren.map((_t) => _t.content).join(' ');
 };
 
-export const childrenToTextChildren = (children, TextComponent, preserveLinebreaks) => {
+export const childrenToTextChildren = (
+  children,
+  TextComponent,
+  preserveLinebreaks,
+) => {
   const _textChildren = getText(children, TextComponent, preserveLinebreaks);
   return _textChildren.map((_t) => _t.child);
 };
@@ -60,7 +64,7 @@ export const childrenObjectsToChildren = (childrenObjects) => {
 };
 
 export const linesToCharacters = (lines) => {
-  return lines.map((_line) => _line?.text || '').join(' ');
+  return lines.map((_line) => _line?.text || '').join('');
 };
 
 export const insertAt = (str, sub, pos) =>
