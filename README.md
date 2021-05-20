@@ -70,12 +70,12 @@ export default Home;
 | `wrapperStyle` | `object or array` | no | style for wrapper `View`
 | `numberOfLines` | `number` | no | defaults to `3`
 | `animate` | `bool` | no | defaults to `true` => applies a subtle animation to see more and see less text, not the complete text itself
-| `backgroundColor` | `string` | no | (deprecated) defaults to `white` => supply `backgroundColor` if your background color is something other than white
+| `backgroundColor` | `string` | no | (removed in v2.1.0 and above) defaults to `white` => supply `backgroundColor` if your background color is something other than white
 | `customTextComponent` | `React component` | no | defaults to `Text`
 | `expandOnly` | `bool` | no | defaults to `false` => hide see less option similar to a linkedIn post
 | `onExpand` | `func` | no | optional callback executed when expanded
 | `onCollapse` | `func` | no | optional callback executed when collapsed
-| `preserveLinebreaks` | `bool` | no | (deprecated) defaults to `false` => preserves `\n` in the content while in the collapsed state. This prop is in experimental stage.
+| `preserveLinebreaks` | `bool` | no | (removed in v2.1.0 and above) defaults to `false` => preserves `\n` in the content while in the collapsed state. This prop is in experimental stage.
 
 Any additional props are passed down to underlying `Text` component.
 
@@ -112,3 +112,7 @@ This package is not transpiled. So inorder for your test cases to work, this pac
 }
 ```
 refer to jest docs [here](https://jestjs.io/docs/en/tutorial-react-native#transformignorepatterns-customization) and github [issue](https://github.com/fawaz-ahmed/react-native-read-more/issues/19)
+
+### Known issues
+`Android only` if `numberOfLines` with a value of `1` is passed down as a prop, text in android devices will overlap at the end of line. This is an issue in `react-native` where text from other lines concatenates into the first one even if we add `\n` to the first line, where the lines returned from `onTextLayout` indicates a different response.
+To overcome this issue, use `numberOfLines` greater than `1`.
