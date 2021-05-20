@@ -40,8 +40,6 @@ const ReadMore = ({
   expandOnly,
   seeMoreOverlapCount,
   debounceSeeMoreCalc,
-  onLayout,
-  onTextLayout,
   ...restProps
 }) => {
   const [additionalProps, setAdditionalProps] = useState({});
@@ -51,8 +49,6 @@ const ReadMore = ({
   );
   // textHeight and textWidth comes from hidden component three
   const [textWidth, setTextWidth] = useState(0);
-  // lineOfImpact comes from hidden component four
-  // const [lineOfImpact, setLineOfImpact] = useState({});
   const [truncatedLineOfImpact, setTruncatedLineOfImpact] = useState('');
   const [truncatedLineOfImpactWidth, setTruncatedLineOfImpactWidth] = useState(
     0,
@@ -64,6 +60,7 @@ const ReadMore = ({
   const [mountHiddenTextOne, setMountHiddenTextOne] = useState(false);
   const [mountHiddenTextTwo, setMountHiddenTextTwo] = useState(false);
   const [mountHiddenTextThree, setMountHiddenTextThree] = useState(false);
+  const [mountHiddenTextFour, setMountHiddenTextFour] = useState(false);
   const [mountHiddenTextSix, setMountHiddenTextSix] = useState(false);
   const [mountHiddenTextSeven, setMountHiddenTextSeven] = useState(false);
   // initial measurement is in progress
@@ -105,8 +102,13 @@ const ReadMore = ({
     ({nativeEvent: {lines: _lines}}) => {
       setHiddenTextLinesWithSeeLess(_lines);
       setMountHiddenTextTwo(false);
+      setMountHiddenTextFour(true);
     },
-    [setHiddenTextLinesWithSeeLess, setMountHiddenTextTwo],
+    [
+      setHiddenTextLinesWithSeeLess,
+      setMountHiddenTextTwo,
+      setMountHiddenTextFour,
+    ],
   );
 
   const onLayoutActualTextComponent = useCallback(
@@ -114,9 +116,9 @@ const ReadMore = ({
       const _event = event; // clone event
       const _width = _event?.nativeEvent?.layout?.width || 0;
       setTextWidth(_width);
-      onLayout(_event);
+      setMountHiddenTextFour(false);
     },
-    [setTextWidth, onLayout],
+    [setTextWidth, setMountHiddenTextFour],
   );
 
   const onTextLayoutActualTextComponent = useCallback(
@@ -126,9 +128,8 @@ const ReadMore = ({
         const _lines = _event?.nativeEvent?.lines || [];
         setCollapsedLines(_lines);
       }
-      onTextLayout(_event);
     },
-    [setCollapsedLines, collapsed, onTextLayout],
+    [setCollapsedLines, collapsed],
   );
 
   const onLayoutThree = useCallback(
@@ -172,6 +173,35 @@ const ReadMore = ({
     setCollapsed((prev) => !prev);
   }, [setCollapsed]);
 
+  const updateLineOfImpact = useCallback(
+    (_text = '', resetCollapsedChildren = true) => {
+      if (hideEllipsis !== !_text?.length) {
+        setHideEllipsis(!_text?.length);
+      }
+      setTruncatedLineOfImpact(_text || '');
+
+      if (!_text?.length) {
+        // reset width if no text
+        // otherwise an effect will update the width
+        setTruncatedLineOfImpactWidth(_text?.length || 0);
+      }
+
+      if (resetCollapsedChildren) {
+        setCollapsedChildren(null);
+      }
+
+      setIsMeasured(true);
+    },
+    [
+      hideEllipsis,
+      setHideEllipsis,
+      setTruncatedLineOfImpact,
+      setTruncatedLineOfImpactWidth,
+      setCollapsedChildren,
+      setIsMeasured,
+    ],
+  );
+
   const measureSeeMoreLine = useCallback(() => {
     if (
       numberOfLines < 1 ||
@@ -202,109 +232,101 @@ const ReadMore = ({
     }
 
     const availableWidth = textWidth - seeMoreWidth;
+    const _trimmedText = _lineOfImpact?.text?.trimEnd?.();
 
     // calculate how many characters to cut off if any
     // trim right before -> spaces and \n
     // width from line, textWidth, seeMoreWidth
 
+    // case 1
     // if no text after right trim
     // hide ellipsis
     // move see more to beginning
-    if (_lineOfImpact.text.trim().length === 0) {
-      _lineOfImpact.width = 0;
-      _lineOfImpact.text = '';
-      setHideEllipsis(true);
-    } else {
-      setHideEllipsis(false);
+    if (!_trimmedText?.length) {
+      return updateLineOfImpact(_trimmedText);
     }
 
-    // todo
-    // right trim and width adjustment
-
-    // setLineOfImpact(_lineOfImpact);
-
+    // case 2
+    // text is there but no need to put \n
+    // enough space for see more text on right side
     if (_lineOfImpact.width < availableWidth) {
-      // if no need to cutoff, simply calculate see more right padding
-      const _seeMoreRightPadding =
-        textWidth - _lineOfImpact.width - seeMoreWidth;
-      if (_seeMoreRightPadding > 0) {
-        setTruncatedLineOfImpact('');
-        setTruncatedLineOfImpactWidth(0);
-        // setReconciledLineOfImpact('');
-        // setReconciledLineOfImpactWidth(0);
-        setSeeMoreRightPadding(_seeMoreRightPadding);
-        // todo: remove this
-        if (animate) {
-          LayoutAnimation.configureNext(readmoreAnimation);
-        }
-      }
-    } else {
-      // todo
-      // determine point, traverse through nodes
-      // create collapsed children with spaces at the point
-      const seeMoreTextLength =
-        `${ellipsis} ${seeMoreText}`.length + seeMoreOverlapCount;
-      const linesTillImpact = Array(_lineOfImpact.index + 1)
-        .fill({})
-        .map((_e, index) => lines[index]);
-      const charactersBeforeSeeMore = linesToCharacters(linesTillImpact);
-      const charactersLengthTillSeeMore = charactersBeforeSeeMore.length;
-      // text break position for collapsed text
-      const textBreakPosition = charactersLengthTillSeeMore - seeMoreTextLength;
-
-      const _truncatedText = _lineOfImpact.text.substr(
-        0,
-        _lineOfImpact.text.length - seeMoreTextLength,
-      );
-
-      if (truncatedLineOfImpact !== _truncatedText) {
-        setTruncatedLineOfImpact(_truncatedText);
-      }
-
-      // go to this position and insert spaces
-      let charactersToTraverse = textBreakPosition;
-      let nodeFound = false;
-      const modifiedChildrenObjects = getText(children, TextComponent, true)
-        ?.map((_childObject) => {
-          if (nodeFound) {
-            return _childObject;
-          }
-          if (_childObject.content.length > charactersToTraverse) {
-            // this node is the one
-            nodeFound = true;
-            const childContent = insertAt(
-              _childObject.content,
-              '\n',
-              charactersToTraverse,
-            );
-            return {
-              type: _childObject?.type,
-              content: childContent,
-              child:
-                _childObject?.type === 'string'
-                  ? childContent
-                  : React.cloneElement(
-                      _childObject,
-                      _childObject.props,
-                      childContent,
-                    ),
-            };
-          }
-          charactersToTraverse =
-            charactersToTraverse - _childObject.content.length;
-
-          return _childObject;
-        })
-        ?.map((_updatedObjects) => {
-          return _updatedObjects.child;
-        });
-
-      if (nodeFound) {
-        setCollapsedChildren(modifiedChildrenObjects);
-      }
+      return updateLineOfImpact(_trimmedText);
     }
 
-    setIsMeasured(true);
+    const seeMoreTextLength =
+      `${ellipsis} ${seeMoreText}`.length + seeMoreOverlapCount;
+
+    // case 3
+    // many spaces at the end of text
+    // so still no need to cutoff the text at end with \n
+    const spaceDifference = _lineOfImpact?.text?.length - _trimmedText?.length;
+    if (spaceDifference >= seeMoreTextLength) {
+      // case 3
+      return updateLineOfImpact(_trimmedText);
+    }
+
+    // case 4
+    // create collapsed children with \n at the point
+    const linesTillImpact = Array(_lineOfImpact.index + 1)
+      .fill({})
+      .map((_e, index) => lines[index]);
+    const charactersBeforeSeeMore = linesToCharacters(linesTillImpact);
+    const charactersLengthTillSeeMore =
+      charactersBeforeSeeMore?.trimEnd?.()?.length || 0;
+    // text break position for collapsed text
+    const textBreakPosition = charactersLengthTillSeeMore - seeMoreTextLength;
+
+    const _truncatedText =
+      _trimmedText
+        ?.substr(0, _trimmedText.length - seeMoreTextLength)
+        ?.trimEnd?.() || '';
+
+    // go to this position and insert \n
+    let charactersToTraverse = textBreakPosition;
+    let nodeFound = false;
+    const modifiedChildrenObjects = getText(children, TextComponent, true)
+      ?.map((_childObject) => {
+        if (nodeFound) {
+          return _childObject;
+        }
+        if (_childObject.content.length > charactersToTraverse) {
+          // this node is the one
+          nodeFound = true;
+          const childContent = insertAt(
+            _childObject.content,
+            '\n',
+            charactersToTraverse,
+          );
+          return {
+            type: _childObject?.type,
+            content: childContent,
+            child:
+              _childObject?.type === 'string'
+                ? childContent
+                : React.cloneElement(
+                    _childObject,
+                    _childObject.props,
+                    childContent,
+                  ),
+          };
+        }
+        charactersToTraverse =
+          charactersToTraverse - _childObject.content.length;
+
+        return _childObject;
+      })
+      ?.map((_updatedObjects) => {
+        return _updatedObjects.child;
+      });
+
+    if (nodeFound) {
+      setCollapsedChildren(modifiedChildrenObjects);
+      return updateLineOfImpact(_truncatedText, false);
+    }
+
+    // todo: inform user
+    // error case
+    return updateLineOfImpact(_trimmedText);
   }, [
     numberOfLines,
     lines,
@@ -312,13 +334,13 @@ const ReadMore = ({
     seeMore,
     textWidth,
     seeMoreWidth,
-    animate,
     ellipsis,
     seeMoreText,
     seeMoreOverlapCount,
-    truncatedLineOfImpact,
+    // truncatedLineOfImpact,
     children,
     TextComponent,
+    updateLineOfImpact,
   ]);
 
   const textProps = afterCollapsed
@@ -400,10 +422,10 @@ const ReadMore = ({
     additionalProps,
   ]);
 
-  // a map of additional props to be passed down
-  // in hidden text components other than style
-  // for accurate measurements
   useEffect(() => {
+    // a map of additional props to be passed down
+    // in hidden text components other than style
+    // for accurate measurements
     const _additionalProps = {};
 
     // pick selected params
@@ -415,7 +437,7 @@ const ReadMore = ({
   }, [allowFontScaling]);
 
   useEffect(() => {
-    if (mountHiddenTextTwo && !seeMoreWidth) {
+    if (mountHiddenTextTwo && !seeMoreWidth && collapsedLines?.length) {
       return;
     }
     // only start measurement after component 2 is unmounted and see more width is calculated
@@ -425,7 +447,7 @@ const ReadMore = ({
     const handle = setTimeout(measureSeeMoreLine, debounceSeeMoreCalc);
     return () => clearTimeout(handle);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mountHiddenTextTwo, seeMoreWidth]);
+  }, [mountHiddenTextTwo, seeMoreWidth, collapsedLines]);
 
   useEffect(() => {
     if (!truncatedLineOfImpact) {
@@ -436,36 +458,18 @@ const ReadMore = ({
   }, [truncatedLineOfImpact]);
 
   useEffect(() => {
-    if (!truncatedLineOfImpactWidth) {
+    if (
+      !(truncatedLineOfImpactWidth || reconciledLineOfImpactWidth) ||
+      !seeMoreWidth ||
+      !textWidth
+    ) {
       return;
     }
 
-    const padding = textWidth - truncatedLineOfImpactWidth - seeMoreWidth;
-    setSeeMoreRightPadding(padding);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [truncatedLineOfImpactWidth]);
+    const _width =
+      reconciledLineOfImpactWidth || truncatedLineOfImpactWidth || 0;
 
-  useEffect(() => {
-    if (Platform.OS !== 'android') {
-      return;
-    }
-
-    if (!collapsedChildren) {
-      setReconciledLineOfImpact('');
-      setReconciledLineOfImpactWidth(0);
-      return;
-    }
-
-    // re-measure line of impact width
-    setMountHiddenTextSix(true);
-  }, [collapsedChildren]);
-
-  useEffect(() => {
-    if (!reconciledLineOfImpactWidth || !seeMoreWidth || !textWidth) {
-      return;
-    }
-    const _seeMoreRightPadding =
-      textWidth - reconciledLineOfImpactWidth - seeMoreWidth;
+    const _seeMoreRightPadding = textWidth - _width - seeMoreWidth;
     if (_seeMoreRightPadding >= 0) {
       setSeeMoreRightPadding(_seeMoreRightPadding);
       if (animate) {
@@ -473,7 +477,12 @@ const ReadMore = ({
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reconciledLineOfImpactWidth, seeMoreWidth, textWidth]);
+  }, [
+    truncatedLineOfImpactWidth,
+    reconciledLineOfImpactWidth,
+    seeMoreWidth,
+    textWidth,
+  ]);
 
   return (
     <View style={wrapperStyle}>
@@ -503,6 +512,16 @@ const ReadMore = ({
           {truncatedLineOfImpact}
         </TextComponent>
       )}
+      {mountHiddenTextFour && (
+        <TextComponent
+          {...commonHiddenComponentProps}
+          numberOfLines={numberOfLines}
+          ellipsizeMode={'clip'}
+          onLayout={onLayoutActualTextComponent}
+          onTextLayout={onTextLayoutActualTextComponent}>
+          {children || ''}
+        </TextComponent>
+      )}
       {/* extract line of impact with collapsed children for remeasurement of right padding on android */}
       {mountHiddenTextSix && (
         <TextComponent
@@ -527,9 +546,7 @@ const ReadMore = ({
         {...additionalProps}
         {...restProps}
         style={style}
-        {...textProps}
-        onLayout={onLayoutActualTextComponent}
-        onTextLayout={onTextLayoutActualTextComponent}>
+        {...textProps}>
         {seeMore && collapsed
           ? collapsedChildren || children || ''
           : children || ''}
@@ -671,14 +688,12 @@ ReadMore.defaultProps = {
   onExpand: () => {},
   onCollapse: () => {},
   expandOnly: false,
-  seeMoreOverlapCount: 1,
+  seeMoreOverlapCount: 2,
   debounceSeeMoreCalc: 300,
   allowFontScaling: Platform.select({
     android: false,
     ios: undefined,
   }),
-  onLayout: () => {},
-  onTextLayout: () => {},
 };
 
 export default memo(ReadMore);
