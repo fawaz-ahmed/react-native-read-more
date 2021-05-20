@@ -385,12 +385,12 @@ const ReadMore = ({
     }
 
     const callback = collapsed ? onCollapse : onExpand;
-    setAfterCollapsed(collapsed);
     if (animate) {
       LayoutAnimation.configureNext(readmoreAnimation, callback);
     } else {
       callback();
     }
+    setAfterCollapsed(collapsed);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [collapsed]);
 
