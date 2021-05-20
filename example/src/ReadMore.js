@@ -450,6 +450,10 @@ const ReadMore = ({
     }
 
     setMountHiddenTextThree(true);
+
+    if (Platform.OS === 'android') {
+      setMountHiddenTextSix(true);
+    }
   }, [truncatedLineOfImpact]);
 
   useEffect(() => {
@@ -468,9 +472,14 @@ const ReadMore = ({
     _seeMoreRightPadding = _seeMoreRightPadding < 0 ? 0 : _seeMoreRightPadding;
 
     setSeeMoreRightPadding(_seeMoreRightPadding);
+
+    /*
+    // shut down animation while measuring
+    // so that it doesn't effects other UI animations
     if (animate && isMeasured) {
       LayoutAnimation.configureNext(readmoreAnimation);
     }
+    */
 
     setIsMeasured(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
