@@ -40,6 +40,8 @@ const ReadMore = ({
   expandOnly,
   seeMoreOverlapCount,
   debounceSeeMoreCalc,
+  onLayout,
+  onTextLayout,
   ...restProps
 }) => {
   const [additionalProps, setAdditionalProps] = useState({});
@@ -62,7 +64,6 @@ const ReadMore = ({
   const [mountHiddenTextOne, setMountHiddenTextOne] = useState(false);
   const [mountHiddenTextTwo, setMountHiddenTextTwo] = useState(false);
   const [mountHiddenTextThree, setMountHiddenTextThree] = useState(false);
-  const [mountHiddenTextFour, setMountHiddenTextFour] = useState(false);
   const [mountHiddenTextSix, setMountHiddenTextSix] = useState(false);
   const [mountHiddenTextSeven, setMountHiddenTextSeven] = useState(false);
   // initial measurement is in progress
@@ -104,35 +105,30 @@ const ReadMore = ({
     ({nativeEvent: {lines: _lines}}) => {
       setHiddenTextLinesWithSeeLess(_lines);
       setMountHiddenTextTwo(false);
-      setMountHiddenTextFour(true);
     },
     [setHiddenTextLinesWithSeeLess, setMountHiddenTextTwo],
   );
 
   const onLayoutActualTextComponent = useCallback(
-    ({
-      nativeEvent: {
-        layout: {width},
-      },
-    }) => {
-      setTextWidth(width);
-      setMountHiddenTextFour(false);
-
-      if (Platform.OS === 'android') {
-        setMountHiddenTextSix(true);
-      }
+    (event) => {
+      const _event = event; // clone event
+      const _width = _event?.nativeEvent?.layout?.width || 0;
+      setTextWidth(_width);
+      onLayout(_event);
     },
-    [setTextWidth],
+    [setTextWidth, onLayout],
   );
 
   const onTextLayoutActualTextComponent = useCallback(
-    ({nativeEvent: {lines: _lines}}) => {
-      if (!collapsed) {
-        return;
+    (event) => {
+      const _event = event; // clone event
+      if (collapsed) {
+        const _lines = _event?.nativeEvent?.lines || [];
+        setCollapsedLines(_lines);
       }
-      setCollapsedLines(_lines);
+      onTextLayout(_event);
     },
-    [setCollapsedLines, collapsed],
+    [setCollapsedLines, collapsed, onTextLayout],
   );
 
   const onLayoutThree = useCallback(
@@ -181,7 +177,8 @@ const ReadMore = ({
       numberOfLines < 1 ||
       !lines.length ||
       !collapsedLines.length ||
-      !seeMore
+      !seeMore ||
+      !seeMoreWidth
     ) {
       return;
     }
@@ -233,8 +230,8 @@ const ReadMore = ({
       if (_seeMoreRightPadding > 0) {
         setTruncatedLineOfImpact('');
         setTruncatedLineOfImpactWidth(0);
-        setReconciledLineOfImpact('');
-        setReconciledLineOfImpactWidth(0);
+        // setReconciledLineOfImpact('');
+        // setReconciledLineOfImpactWidth(0);
         setSeeMoreRightPadding(_seeMoreRightPadding);
         // todo: remove this
         if (animate) {
@@ -349,12 +346,12 @@ const ReadMore = ({
 
   // use after measured here
   const seeMoreTextHidingStyle = !isMeasured
-    ? {color: 'transparent'}
-    : {
-        backgroundColor: 'transparent',
-      };
+    ? styles.transparentColor
+    : styles.transparentBackground;
   const seeMoreContainerStyle = [
-    styles.seeMoreContainer,
+    hideEllipsis
+      ? styles.seeMoreContainerEllpisisHidden
+      : styles.seeMoreContainer,
     {
       marginRight: seeMoreRightPadding,
     },
@@ -381,7 +378,11 @@ const ReadMore = ({
 
   useEffect(() => {
     const handle = setTimeout(() => {
+      // to commence measurement chain
+      // we should mount component 1
+      // also reset isMeasured
       setMountHiddenTextOne(true);
+      setIsMeasured(false);
     }, debounceSeeMoreCalc);
     return () => clearTimeout(handle);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -414,21 +415,17 @@ const ReadMore = ({
   }, [allowFontScaling]);
 
   useEffect(() => {
-    if (mountHiddenTextOne || mountHiddenTextTwo || mountHiddenTextFour) {
+    if (mountHiddenTextTwo && !seeMoreWidth) {
       return;
     }
+    // only start measurement after component 2 is unmounted and see more width is calculated
+    // since component 1 mounts -> unmounts -> mounts component 2
+    // then component 2 unmounts itself
+    // and then all measurement params are available
     const handle = setTimeout(measureSeeMoreLine, debounceSeeMoreCalc);
     return () => clearTimeout(handle);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    lines,
-    numberOfLines,
-    collapsedLines,
-    seeMore,
-    mountHiddenTextOne,
-    mountHiddenTextTwo,
-    mountHiddenTextFour,
-  ]);
+  }, [mountHiddenTextTwo, seeMoreWidth]);
 
   useEffect(() => {
     if (!truncatedLineOfImpact) {
@@ -449,13 +446,27 @@ const ReadMore = ({
   }, [truncatedLineOfImpactWidth]);
 
   useEffect(() => {
+    if (Platform.OS !== 'android') {
+      return;
+    }
+
+    if (!collapsedChildren) {
+      setReconciledLineOfImpact('');
+      setReconciledLineOfImpactWidth(0);
+      return;
+    }
+
+    // re-measure line of impact width
+    setMountHiddenTextSix(true);
+  }, [collapsedChildren]);
+
+  useEffect(() => {
     if (!reconciledLineOfImpactWidth || !seeMoreWidth || !textWidth) {
-      // setSeeMoreRightPadding(0);
       return;
     }
     const _seeMoreRightPadding =
       textWidth - reconciledLineOfImpactWidth - seeMoreWidth;
-    if (_seeMoreRightPadding > 0) {
+    if (_seeMoreRightPadding >= 0) {
       setSeeMoreRightPadding(_seeMoreRightPadding);
       if (animate) {
         LayoutAnimation.configureNext(readmoreAnimation);
@@ -492,17 +503,7 @@ const ReadMore = ({
           {truncatedLineOfImpact}
         </TextComponent>
       )}
-      {mountHiddenTextFour && (
-        <TextComponent
-          {...commonHiddenComponentProps}
-          numberOfLines={numberOfLines}
-          ellipsizeMode={'clip'}
-          onLayout={onLayoutActualTextComponent}
-          onTextLayout={onTextLayoutActualTextComponent}>
-          {children || ''}
-        </TextComponent>
-      )}
-      {/* extract line of impact with measured children */}
+      {/* extract line of impact with collapsed children for remeasurement of right padding on android */}
       {mountHiddenTextSix && (
         <TextComponent
           {...commonHiddenComponentProps}
@@ -526,7 +527,9 @@ const ReadMore = ({
         {...additionalProps}
         {...restProps}
         style={style}
-        {...textProps}>
+        {...textProps}
+        onLayout={onLayoutActualTextComponent}
+        onTextLayout={onTextLayoutActualTextComponent}>
         {seeMore && collapsed
           ? collapsedChildren || children || ''
           : children || ''}
@@ -544,21 +547,26 @@ const ReadMore = ({
       {/* See more component */}
       {seeMore && collapsed && afterCollapsed && (
         <View style={seeMoreContainerStyle} onLayout={onSeeMoreViewLayout}>
-          <TextComponent
-            key={`${isMeasured}`}
-            {...additionalProps}
-            {...restProps}
-            onPress={toggle}
-            style={[style, seeMoreTextHidingStyle]}>
-            {`${hideEllipsis ? '' : ellipsis}`}
-          </TextComponent>
+          {!hideEllipsis && (
+            <TextComponent
+              key={`${isMeasured}-${hideEllipsis}`}
+              {...additionalProps}
+              {...restProps}
+              onPress={toggle}
+              style={[
+                style,
+                seeMoreTextHidingStyle,
+                hideEllipsis ? styles.transparentColor : {},
+              ]}>
+              {`${ellipsis} `}
+            </TextComponent>
+          )}
           <TextComponent
             {...additionalProps}
             {...restProps}
             onPress={toggle}
             style={[style, seeMoreStyle, seeMoreTextHidingStyle]}>
-            {` ${seeMoreText}`}
-            {hideEllipsis ? '   ' : ''}
+            {seeMoreText}
           </TextComponent>
         </View>
       )}
@@ -592,6 +600,12 @@ const styles = StyleSheet.create({
     bottom: 0,
     flexDirection: 'row',
   },
+  seeMoreContainerEllpisisHidden: {
+    position: 'absolute',
+    left: 0,
+    bottom: 0,
+    flexDirection: 'row',
+  },
   seeMoreButton: {
     flexDirection: 'row',
   },
@@ -603,6 +617,16 @@ const styles = StyleSheet.create({
   seeLessText: {
     color: 'red',
     fontWeight: 'bold',
+  },
+  transparentBackground: {
+    backgroundColor: 'transparent',
+  },
+  transparentColor: {
+    color: 'transparent',
+  },
+  hiddenEllpisisText: {
+    color: 'transparent',
+    position: 'absolute',
   },
 });
 
@@ -628,6 +652,8 @@ ReadMore.propTypes = {
   expandOnly: PropTypes.bool,
   seeMoreOverlapCount: PropTypes.number,
   debounceSeeMoreCalc: PropTypes.number,
+  onLayout: PropTypes.func,
+  onTextLayout: PropTypes.func,
 };
 
 ReadMore.defaultProps = {
@@ -651,6 +677,8 @@ ReadMore.defaultProps = {
     android: false,
     ios: undefined,
   }),
+  onLayout: () => {},
+  onTextLayout: () => {},
 };
 
 export default memo(ReadMore);
