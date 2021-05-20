@@ -175,25 +175,23 @@ const ReadMore = ({
 
   const updateLineOfImpact = useCallback(
     (_text = '', resetCollapsedChildren = true) => {
-      if (hideEllipsis !== !_text?.length) {
-        setHideEllipsis(!_text?.length);
-      }
+      setHideEllipsis(!_text?.length);
       setTruncatedLineOfImpact(_text || '');
 
       if (!_text?.length) {
         // reset width if no text
         // otherwise an effect will update the width
-        setTruncatedLineOfImpactWidth(_text?.length || 0);
+        setTruncatedLineOfImpactWidth(0);
+        setReconciledLineOfImpactWidth(0);
+        setSeeMoreRightPadding(0);
+        setIsMeasured(true);
       }
 
       if (resetCollapsedChildren) {
         setCollapsedChildren(null);
       }
-
-      setIsMeasured(true);
     },
     [
-      hideEllipsis,
       setHideEllipsis,
       setTruncatedLineOfImpact,
       setTruncatedLineOfImpactWidth,
@@ -261,7 +259,6 @@ const ReadMore = ({
     // so still no need to cutoff the text at end with \n
     const spaceDifference = _lineOfImpact?.text?.length - _trimmedText?.length;
     if (spaceDifference >= seeMoreTextLength) {
-      // case 3
       return updateLineOfImpact(_trimmedText);
     }
 
@@ -337,7 +334,6 @@ const ReadMore = ({
     ellipsis,
     seeMoreText,
     seeMoreOverlapCount,
-    // truncatedLineOfImpact,
     children,
     TextComponent,
     updateLineOfImpact,
@@ -404,7 +400,6 @@ const ReadMore = ({
       // we should mount component 1
       // also reset isMeasured
       setMountHiddenTextOne(true);
-      setIsMeasured(false);
     }, debounceSeeMoreCalc);
     return () => clearTimeout(handle);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -469,13 +464,15 @@ const ReadMore = ({
     const _width =
       reconciledLineOfImpactWidth || truncatedLineOfImpactWidth || 0;
 
-    const _seeMoreRightPadding = textWidth - _width - seeMoreWidth;
-    if (_seeMoreRightPadding >= 0) {
-      setSeeMoreRightPadding(_seeMoreRightPadding);
-      if (animate) {
-        LayoutAnimation.configureNext(readmoreAnimation);
-      }
+    let _seeMoreRightPadding = textWidth - _width - seeMoreWidth;
+    _seeMoreRightPadding = _seeMoreRightPadding < 0 ? 0 : _seeMoreRightPadding;
+
+    setSeeMoreRightPadding(_seeMoreRightPadding);
+    if (animate && isMeasured) {
+      LayoutAnimation.configureNext(readmoreAnimation);
     }
+
+    setIsMeasured(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     truncatedLineOfImpactWidth,
