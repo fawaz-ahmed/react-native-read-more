@@ -114,5 +114,5 @@ This package is not transpiled. So inorder for your test cases to work, this pac
 refer to jest docs [here](https://jestjs.io/docs/en/tutorial-react-native#transformignorepatterns-customization) and github [issue](https://github.com/fawaz-ahmed/react-native-read-more/issues/19)
 
 ### Known issues
-`Android only` if `numberOfLines` with a value of `1` is passed down as a prop, text in android devices will overlap at the end of line. This is an issue in `react-native` where text from other lines concatenates into the first one even if we add \n to the first line, where the lines returned from `onTextLayout` indicates a different response.
+`Android only` if `numberOfLines` with a value of `1` is passed down as a prop, text in android devices will overlap at the end of line. This is an issue in `react-native` where text from other lines concatenates into the first one even if we add `\n` to the first line, where the lines returned from `onTextLayout` indicates a different response.
 To overcome this issue, use `numberOfLines` greater than `1`.
