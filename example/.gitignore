@@ -28,6 +28,7 @@ build/
 .gradle
 local.properties
 *.iml
+*.hprof
 
 # node.js
 #
@@ -59,4 +60,21 @@ buck-out/
 /ios/Pods/
 /ios/Podfile.lock
 
+
+# Logs
+*.log
+npm-debug.log
+
+# Runtime data
+tmp
+build
+dist
+
+# Dependency directory
+node_modules
 yarn.lock
+
+.DS_*
+
+example/ios/example.xcworkspace/xcshareddata
+example/src/test_image_*
