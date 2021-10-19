@@ -50,8 +50,9 @@ const ReadMore = ({
   // textHeight and textWidth comes from hidden component three
   const [textWidth, setTextWidth] = useState(0);
   const [truncatedLineOfImpact, setTruncatedLineOfImpact] = useState('');
-  const [truncatedLineOfImpactWidth, setTruncatedLineOfImpactWidth] =
-    useState(0);
+  const [truncatedLineOfImpactWidth, setTruncatedLineOfImpactWidth] = useState(
+    0,
+  );
   const [lines, setLines] = useState([]);
   const [collapsedLines, setCollapsedLines] = useState([]);
   const [seeMoreRightPadding, setSeeMoreRightPadding] = useState(0);
@@ -597,13 +598,13 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     top: 0,
-    color: 'transparent'
+    color: 'transparent',
   },
   hiddenTextAbsoluteCompact: {
     position: 'absolute',
     left: 0,
     top: 0,
-    color: 'transparent'
+    color: 'transparent',
   },
   seeMoreContainer: {
     position: 'absolute',
