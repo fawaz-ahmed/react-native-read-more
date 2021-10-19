@@ -50,9 +50,8 @@ const ReadMore = ({
   // textHeight and textWidth comes from hidden component three
   const [textWidth, setTextWidth] = useState(0);
   const [truncatedLineOfImpact, setTruncatedLineOfImpact] = useState('');
-  const [truncatedLineOfImpactWidth, setTruncatedLineOfImpactWidth] = useState(
-    0,
-  );
+  const [truncatedLineOfImpactWidth, setTruncatedLineOfImpactWidth] =
+    useState(0);
   const [lines, setLines] = useState([]);
   const [collapsedLines, setCollapsedLines] = useState([]);
   const [seeMoreRightPadding, setSeeMoreRightPadding] = useState(0);
@@ -112,7 +111,7 @@ const ReadMore = ({
   );
 
   const onLayoutActualTextComponent = useCallback(
-    (event) => {
+    event => {
       const _event = event; // clone event
       const _width = _event?.nativeEvent?.layout?.width || 0;
       setTextWidth(_width);
@@ -122,7 +121,7 @@ const ReadMore = ({
   );
 
   const onTextLayoutActualTextComponent = useCallback(
-    (event) => {
+    event => {
       const _event = event; // clone event
       if (collapsed) {
         const _lines = _event?.nativeEvent?.lines || [];
@@ -170,7 +169,7 @@ const ReadMore = ({
   );
 
   const toggle = useCallback(() => {
-    setCollapsed((prev) => !prev);
+    setCollapsed(prev => !prev);
   }, [setCollapsed]);
 
   const updateLineOfImpact = useCallback(
@@ -282,7 +281,7 @@ const ReadMore = ({
     let charactersToTraverse = textBreakPosition;
     let nodeFound = false;
     const modifiedChildrenObjects = getText(children, TextComponent, true)
-      ?.map((_childObject) => {
+      ?.map(_childObject => {
         if (nodeFound) {
           return _childObject;
         }
@@ -312,7 +311,7 @@ const ReadMore = ({
 
         return _childObject;
       })
-      ?.map((_updatedObjects) => {
+      ?.map(_updatedObjects => {
         return _updatedObjects.child;
       });
 
@@ -473,16 +472,7 @@ const ReadMore = ({
 
     setSeeMoreRightPadding(_seeMoreRightPadding);
 
-    /*
-    // shut down animation while measuring
-    // so that it doesn't effects other UI animations
-    if (animate && isMeasured) {
-      LayoutAnimation.configureNext(readmoreAnimation);
-    }
-    */
-
     setIsMeasured(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     truncatedLineOfImpactWidth,
     reconciledLineOfImpactWidth,
@@ -607,15 +597,13 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     top: 0,
-    color: 'transparent',
-    display: 'none',
+    color: 'transparent'
   },
   hiddenTextAbsoluteCompact: {
     position: 'absolute',
     left: 0,
     top: 0,
-    color: 'transparent',
-    display: 'none',
+    color: 'transparent'
   },
   seeMoreContainer: {
     position: 'absolute',
