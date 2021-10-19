@@ -2,8 +2,10 @@ name: react-native-read-more package
 
 on:
   push:
-    branches:
-      - master
+    tags:
+      - '*.*.*'
+
+  workflow_dispatch:
 
 jobs:
   publish-npm:
