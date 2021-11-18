@@ -50,9 +50,7 @@ const ReadMore = ({
   // textHeight and textWidth comes from hidden component three
   const [textWidth, setTextWidth] = useState(0);
   const [truncatedLineOfImpact, setTruncatedLineOfImpact] = useState('');
-  const [truncatedLineOfImpactWidth, setTruncatedLineOfImpactWidth] = useState(
-    0,
-  );
+  const [truncatedLineOfImpactWidth, setTruncatedLineOfImpactWidth] = useState(0);
   const [lines, setLines] = useState([]);
   const [collapsedLines, setCollapsedLines] = useState([]);
   const [seeMoreRightPadding, setSeeMoreRightPadding] = useState(0);
@@ -220,13 +218,15 @@ const ReadMore = ({
     _lineOfImpact.index = numberOfLines - 1;
     if (Platform.OS === 'ios') {
       const modifiedIndex = lines.findIndex((_line, index) => {
-        if (index + 1 < numberOfLines - 1) {
+        if (index < numberOfLines - 1) {
           return false;
         }
         return collapsedLines[numberOfLines - 1].text.includes(_line.text);
       });
-      _lineOfImpact = lines[modifiedIndex];
-      _lineOfImpact.index = modifiedIndex;
+      if (modifiedIndex !== -1) {
+        _lineOfImpact = lines[modifiedIndex];
+        _lineOfImpact.index = modifiedIndex;
+      }
     }
 
     const availableWidth = textWidth - seeMoreWidth;
