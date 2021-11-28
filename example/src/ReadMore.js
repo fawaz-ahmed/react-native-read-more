@@ -40,6 +40,7 @@ const ReadMore = ({
   expandOnly,
   seeMoreOverlapCount,
   debounceSeeMoreCalc,
+  onReady,
   ...restProps
 }) => {
   const [additionalProps, setAdditionalProps] = useState({});
@@ -47,7 +48,6 @@ const ReadMore = ({
   const [hiddenTextLinesWithSeeLess, setHiddenTextLinesWithSeeLess] = useState(
     [],
   );
-  // textHeight and textWidth comes from hidden component three
   const [textWidth, setTextWidth] = useState(0);
   const [truncatedLineOfImpact, setTruncatedLineOfImpact] = useState('');
   const [truncatedLineOfImpactWidth, setTruncatedLineOfImpactWidth] = useState(0);
@@ -59,10 +59,11 @@ const ReadMore = ({
   const [mountHiddenTextTwo, setMountHiddenTextTwo] = useState(false);
   const [mountHiddenTextThree, setMountHiddenTextThree] = useState(false);
   const [mountHiddenTextFour, setMountHiddenTextFour] = useState(false);
+  const [mountHiddenTextFive, setMountHiddenTextFive] = useState(false);
   const [mountHiddenTextSix, setMountHiddenTextSix] = useState(false);
-  const [mountHiddenTextSeven, setMountHiddenTextSeven] = useState(false);
   // initial measurement is in progress
   const [isMeasured, setIsMeasured] = useState(false);
+  const [isReady, setIsReady] = useState(false);
   // logic decisioning params
   const [seeMore, setSeeMore] = useState(false);
   const [collapsed, setCollapsed] = useState(true);
@@ -100,26 +101,26 @@ const ReadMore = ({
     ({nativeEvent: {lines: _lines}}) => {
       setHiddenTextLinesWithSeeLess(_lines);
       setMountHiddenTextTwo(false);
-      setMountHiddenTextFour(true);
+      setMountHiddenTextThree(true);
     },
     [
       setHiddenTextLinesWithSeeLess,
       setMountHiddenTextTwo,
-      setMountHiddenTextFour,
+      setMountHiddenTextThree,
     ],
   );
 
-  const onLayoutActualTextComponent = useCallback(
+  const onLayoutHiddenTextThree = useCallback(
     event => {
       const _event = event; // clone event
       const _width = _event?.nativeEvent?.layout?.width || 0;
       setTextWidth(_width);
-      setMountHiddenTextFour(false);
+      setMountHiddenTextThree(false);
     },
-    [setTextWidth, setMountHiddenTextFour],
+    [setTextWidth, setMountHiddenTextThree],
   );
 
-  const onTextLayoutActualTextComponent = useCallback(
+  const onTextLayoutHiddenTextThree = useCallback(
     event => {
       const _event = event; // clone event
       if (collapsed) {
@@ -130,41 +131,50 @@ const ReadMore = ({
     [setCollapsedLines, collapsed],
   );
 
-  const onLayoutThree = useCallback(
+  const onLayoutFour = useCallback(
     ({
       nativeEvent: {
         layout: {width},
       },
     }) => {
       setTruncatedLineOfImpactWidth(width);
-      setMountHiddenTextThree(false);
+      setMountHiddenTextFour(false);
+      setMountHiddenTextFive(true);
     },
-    [setTruncatedLineOfImpactWidth, setMountHiddenTextThree],
+    [
+      setTruncatedLineOfImpactWidth,
+      setMountHiddenTextFour,
+      setMountHiddenTextFive,
+    ],
   );
 
-  const onLayoutHiddenTextSix = useCallback(() => {
-    setMountHiddenTextSix(false);
-    setMountHiddenTextSeven(true);
-  }, [setMountHiddenTextSix, setMountHiddenTextSeven]);
+  const onLayoutHiddenTextFive = useCallback(() => {
+    setMountHiddenTextFive(false);
+    setMountHiddenTextSix(true);
+  }, [setMountHiddenTextFive, setMountHiddenTextSix]);
 
-  const onTextLayoutHiddenTextSix = useCallback(
+  const onTextLayoutHiddenTextFive = useCallback(
     ({nativeEvent: {lines: _lines}}) => {
       const _lineOfImpact = _lines[numberOfLines - 1];
-      setReconciledLineOfImpact(_lineOfImpact?.text || '');
+      setReconciledLineOfImpact(_lineOfImpact?.text?.trimEnd?.() || '');
     },
     [numberOfLines, setReconciledLineOfImpact],
   );
 
-  const onLayoutHiddenTextSeven = useCallback(
+  const onLayoutHiddenTextSix = useCallback(
     ({
       nativeEvent: {
         layout: {width},
       },
     }) => {
-      setMountHiddenTextSeven(false);
-      setReconciledLineOfImpactWidth(width);
+      setMountHiddenTextSix(false);
+      setReconciledLineOfImpactWidth(reconciledLineOfImpact ? width : 0);
     },
-    [setReconciledLineOfImpactWidth, setMountHiddenTextSeven],
+    [
+      setReconciledLineOfImpactWidth,
+      setMountHiddenTextSix,
+      reconciledLineOfImpact,
+    ],
   );
 
   const toggle = useCallback(() => {
@@ -229,12 +239,16 @@ const ReadMore = ({
       }
     }
 
-    const availableWidth = textWidth - seeMoreWidth;
     const _trimmedText = _lineOfImpact?.text?.trimEnd?.();
 
     // calculate how many characters to cut off if any
     // trim right before -> spaces and \n
     // width from line, textWidth, seeMoreWidth
+
+    if (_trimmedText?.length && !textWidth) {
+      // textWidth is being measured
+      return;
+    }
 
     // case 1
     // if no text after right trim
@@ -243,6 +257,8 @@ const ReadMore = ({
     if (!_trimmedText?.length) {
       return updateLineOfImpact(_trimmedText);
     }
+
+    const availableWidth = textWidth - seeMoreWidth;
 
     // case 2
     // text is there but no need to put \n
@@ -442,18 +458,14 @@ const ReadMore = ({
     const handle = setTimeout(measureSeeMoreLine, debounceSeeMoreCalc);
     return () => clearTimeout(handle);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mountHiddenTextTwo, seeMoreWidth, collapsedLines]);
+  }, [mountHiddenTextTwo, seeMoreWidth, collapsedLines, textWidth]);
 
   useEffect(() => {
     if (!truncatedLineOfImpact) {
       return;
     }
 
-    setMountHiddenTextThree(true);
-
-    if (Platform.OS === 'android') {
-      setMountHiddenTextSix(true);
-    }
+    setMountHiddenTextFour(true);
   }, [truncatedLineOfImpact]);
 
   useEffect(() => {
@@ -481,6 +493,19 @@ const ReadMore = ({
     textWidth,
   ]);
 
+  useEffect(() => {
+    if (!isMeasured || isReady) {
+      return;
+    }
+
+    const handle = setTimeout(() => {
+      setIsReady(true);
+      onReady();
+    }, debounceSeeMoreCalc);
+    return () => clearTimeout(handle);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMeasured, isReady]);
+
   return (
     <View style={wrapperStyle}>
       {/* text component to measure see if see more is applicable and get lines */}
@@ -502,39 +527,39 @@ const ReadMore = ({
         </TextComponent>
       )}
       {/* extract width of line of impact without see more line */}
-      {mountHiddenTextThree && (
+      {mountHiddenTextFour && (
         <TextComponent
           {...hiddenComponentPropsLineOfImpact}
-          onLayout={onLayoutThree}>
+          onLayout={onLayoutFour}>
           {truncatedLineOfImpact}
         </TextComponent>
       )}
-      {mountHiddenTextFour && (
+      {mountHiddenTextThree && (
         <TextComponent
           {...commonHiddenComponentProps}
           numberOfLines={numberOfLines}
           ellipsizeMode={'clip'}
-          onLayout={onLayoutActualTextComponent}
-          onTextLayout={onTextLayoutActualTextComponent}>
+          onLayout={onLayoutHiddenTextThree}
+          onTextLayout={onTextLayoutHiddenTextThree}>
           {children || ''}
         </TextComponent>
       )}
       {/* extract line of impact with collapsed children for remeasurement of right padding on android */}
-      {mountHiddenTextSix && (
+      {mountHiddenTextFive && (
         <TextComponent
           {...commonHiddenComponentProps}
           numberOfLines={numberOfLines + 1}
-          onLayout={onLayoutHiddenTextSix}
-          onTextLayout={onTextLayoutHiddenTextSix}>
+          onLayout={onLayoutHiddenTextFive}
+          onTextLayout={onTextLayoutHiddenTextFive}>
           {collapsedChildren || ''}
           {/* no see less here since it's in collapsed state replicating original component */}
         </TextComponent>
       )}
       {/* extract width of reconciled line of impact without see more line */}
-      {mountHiddenTextSeven && (
+      {mountHiddenTextSix && (
         <TextComponent
           {...hiddenComponentPropsLineOfImpact}
-          onLayout={onLayoutHiddenTextSeven}>
+          onLayout={onLayoutHiddenTextSix}>
           {reconciledLineOfImpact}
         </TextComponent>
       )}
@@ -666,6 +691,7 @@ ReadMore.propTypes = {
   debounceSeeMoreCalc: PropTypes.number,
   onLayout: PropTypes.func,
   onTextLayout: PropTypes.func,
+  onReady: PropTypes.func,
 };
 
 ReadMore.defaultProps = {
@@ -689,6 +715,7 @@ ReadMore.defaultProps = {
     android: false,
     ios: undefined,
   }),
+  onReady: () => {},
 };
 
 export default memo(ReadMore);
