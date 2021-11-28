@@ -75,6 +75,7 @@ export default Home;
 | `expandOnly` | `bool` | no | defaults to `false` => hide see less option similar to a linkedIn post
 | `onExpand` | `func` | no | optional callback executed when expanded
 | `onCollapse` | `func` | no | optional callback executed when collapsed
+| `onReady` | `func` | no | optional callback executed when see more placement measurements are completed
 | `preserveLinebreaks` | `bool` | no | (removed in v2.1.0 and above) defaults to `false` => preserves `\n` in the content while in the collapsed state. This prop is in experimental stage.
 
 Any additional props are passed down to underlying `Text` component.
