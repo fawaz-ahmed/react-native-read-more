@@ -1,6 +1,6 @@
 {
   "name": "@fawazahmed/react-native-read-more",
-  "version": "2.2.2",
+  "version": "2.3.0",
   "description": "A simple react native library to show large blocks of text in a condensed manner with the ability to collapse and expand.",
   "main": "index.js",
   "types": "index.d.ts",
@@ -37,10 +37,6 @@
   "homepage": "https://github.com/fawaz-ahmed/react-native-read-more#readme",
   "dependencies": {
     "prop-types": "^15.7.2"
-  },
-  "devDependencies": {
-    "@types/react-native": "^0.66.0",
-    "react": "^16.9.0"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
