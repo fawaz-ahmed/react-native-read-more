@@ -228,7 +228,7 @@ const ReadMore = ({
     _lineOfImpact.index = numberOfLines - 1;
     if (Platform.OS === 'ios') {
       const modifiedIndex = lines.findIndex((_line, index) => {
-        if (index < numberOfLines - 1) {
+        if (index < numberOfLines - 1 || !_line.text?.trimEnd?.()) {
           return false;
         }
         return collapsedLines[numberOfLines - 1].text.includes(_line.text);

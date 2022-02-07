@@ -1,6 +1,6 @@
 {
   "name": "@fawazahmed/react-native-read-more",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "A simple react native library to show large blocks of text in a condensed manner with the ability to collapse and expand.",
   "main": "index.js",
   "types": "index.d.ts",
