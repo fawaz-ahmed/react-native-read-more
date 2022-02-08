@@ -70,13 +70,12 @@ export default Home;
 | `wrapperStyle` | `object or array` | no | style for wrapper `View`
 | `numberOfLines` | `number` | no | defaults to `3`
 | `animate` | `bool` | no | defaults to `true` => applies a subtle animation to see more and see less text, not the complete text itself
-| `backgroundColor` | `string` | no | (removed in v2.1.0 and above) defaults to `white` => supply `backgroundColor` if your background color is something other than white
 | `customTextComponent` | `React component` | no | defaults to `Text`
 | `expandOnly` | `bool` | no | defaults to `false` => hide see less option similar to a linkedIn post
 | `onExpand` | `func` | no | optional callback executed when expanded
 | `onCollapse` | `func` | no | optional callback executed when collapsed
 | `onReady` | `func` | no | optional callback executed when see more placement measurements are completed
-| `preserveLinebreaks` | `bool` | no | (removed in v2.1.0 and above) defaults to `false` => preserves `\n` in the content while in the collapsed state. This prop is in experimental stage.
+| `seeMoreContainerStyleSecondary` | `object` | no | Incase of text overlap, pass { position: 'relative' } see [issue](https://github.com/fawaz-ahmed/react-native-read-more/issues/52)
 
 Any additional props are passed down to underlying `Text` component.
 

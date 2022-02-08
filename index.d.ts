@@ -22,6 +22,7 @@ export interface ReadMoreProps {
     onLayout?: (event: LayoutChangeEvent) => void;
     onTextLayout?: (event: NativeSyntheticEvent<TextLayoutEventData>) => void;
     onReady?: () => void;
+    seeMoreContainerStyleSecondary: StyleProp<ViewStyle>;
 }
 declare const ReadMore: React.FC<ReadMoreProps>;
 export default ReadMore;
