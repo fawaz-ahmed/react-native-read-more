@@ -41,6 +41,7 @@ const ReadMore = ({
   seeMoreOverlapCount,
   debounceSeeMoreCalc,
   onReady,
+  seeMoreContainerStyleSecondary,
   ...restProps
 }) => {
   const [additionalProps, setAdditionalProps] = useState({});
@@ -585,7 +586,9 @@ const ReadMore = ({
       </TextComponent>
       {/* See more component */}
       {seeMore && collapsed && afterCollapsed && (
-        <View style={seeMoreContainerStyle} onLayout={onSeeMoreViewLayout}>
+        <View
+          style={[seeMoreContainerStyle, seeMoreContainerStyleSecondary]}
+          onLayout={onSeeMoreViewLayout}>
           {!hideEllipsis && (
             <TextComponent
               key={`${isMeasured}-${hideEllipsis}`}
@@ -692,6 +695,7 @@ ReadMore.propTypes = {
   onLayout: PropTypes.func,
   onTextLayout: PropTypes.func,
   onReady: PropTypes.func,
+  seeMoreContainerStyleSecondary: PropTypes.object,
 };
 
 ReadMore.defaultProps = {
@@ -716,6 +720,7 @@ ReadMore.defaultProps = {
     ios: undefined,
   }),
   onReady: () => {},
+  seeMoreContainerStyleSecondary: {},
 };
 
 export default memo(ReadMore);
