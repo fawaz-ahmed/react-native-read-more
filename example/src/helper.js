@@ -1,43 +1,42 @@
 import React from 'react';
 
-const getStringChild = (child, preserveLinebreaks = false) => {
-  const content = preserveLinebreaks ? child : child?.split('\n').join(' ');
+const getStringChild = child => {
   return {
     type: 'string',
-    content,
-    child: content,
+    content: child,
+    child,
   };
 };
 
-const getTextChild = (child, preserveLinebreaks = false) => {
-  const content = preserveLinebreaks
-    ? child.props.children
-    : child.props.children?.split('\n').join(' ');
+const getTextChild = child => {
   return {
     type: child?.type?.displayName,
-    content,
-    child: React.cloneElement(child, child.props, content),
+    content: child.props.children,
+    child: React.cloneElement(child, child.props, child.props.children),
   };
 };
 
-export const getText = (children, TextComponent, preserveLinebreaks) => {
+export const getTextByChildren = (children, TextComponent) => {
   if (typeof children === 'string') {
-    return [getStringChild(children, preserveLinebreaks)];
+    return [getStringChild(children)];
+  }
+
+  if (typeof children === 'object' && children.props?.children) {
+    return getTextByChildren(React.Children.toArray(children.props.children));
   }
 
   if (Array.isArray(children)) {
     return children
-      .filter((_child) => {
+      .filter(_child => {
         return (
           typeof _child === 'string' ||
           _child?.type?.displayName === TextComponent?.displayName
         );
       })
-      .map((_child) => {
+      .map(_child => {
         if (typeof _child === 'string') {
-          return getStringChild(_child, preserveLinebreaks);
+          return getStringChild(_child);
         }
-
         return getTextChild(_child);
       });
   }
@@ -45,26 +44,8 @@ export const getText = (children, TextComponent, preserveLinebreaks) => {
   return null;
 };
 
-export const childrenToText = (children, TextComponent, preserveLinebreaks) => {
-  const _textChildren = getText(children, TextComponent, preserveLinebreaks);
-  return _textChildren.map((_t) => _t.content).join(' ');
-};
-
-export const childrenToTextChildren = (
-  children,
-  TextComponent,
-  preserveLinebreaks,
-) => {
-  const _textChildren = getText(children, TextComponent, preserveLinebreaks);
-  return _textChildren.map((_t) => _t.child);
-};
-
-export const childrenObjectsToChildren = (childrenObjects) => {
-  return childrenObjects.map((_t) => _t.child);
-};
-
-export const linesToCharacters = (lines) => {
-  return lines.map((_line) => _line?.text || '').join('');
+export const linesToCharacters = lines => {
+  return lines.map(_line => _line?.text || '').join('');
 };
 
 export const insertAt = (str, sub, pos) =>
