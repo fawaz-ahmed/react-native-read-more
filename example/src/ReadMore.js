@@ -7,8 +7,9 @@ import {
   LayoutAnimation,
   Platform,
   UIManager,
+  TextPropTypes,
 } from 'react-native';
-import {getText, insertAt, linesToCharacters} from './helper';
+import {getTextByChildren, insertAt, linesToCharacters} from './helper';
 
 if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -298,7 +299,7 @@ const ReadMore = ({
     // go to this position and insert \n
     let charactersToTraverse = textBreakPosition;
     let nodeFound = false;
-    const modifiedChildrenObjects = getText(children, TextComponent, true)
+    const modifiedChildrenObjects = getTextByChildren(children, TextComponent)
       ?.map(_childObject => {
         if (nodeFound) {
           return _childObject;
@@ -671,12 +672,10 @@ const styles = StyleSheet.create({
 });
 
 ReadMore.propTypes = {
-  style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+  ...TextPropTypes,
   seeMoreStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   seeLessStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   wrapperStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
-  children: PropTypes.any,
-  numberOfLines: PropTypes.number,
   seeMoreText: PropTypes.string,
   seeLessText: PropTypes.string,
   animate: PropTypes.bool,
@@ -686,14 +685,11 @@ ReadMore.propTypes = {
     PropTypes.elementType,
   ]),
   ellipsis: PropTypes.string,
-  allowFontScaling: PropTypes.bool,
   onExpand: PropTypes.func,
   onCollapse: PropTypes.func,
   expandOnly: PropTypes.bool,
   seeMoreOverlapCount: PropTypes.number,
   debounceSeeMoreCalc: PropTypes.number,
-  onLayout: PropTypes.func,
-  onTextLayout: PropTypes.func,
   onReady: PropTypes.func,
   seeMoreContainerStyleSecondary: PropTypes.object,
 };
@@ -703,7 +699,6 @@ ReadMore.defaultProps = {
   seeMoreStyle: StyleSheet.flatten([styles.defaultText, styles.seeMoreText]),
   seeLessStyle: StyleSheet.flatten([styles.defaultText, styles.seeLessText]),
   wrapperStyle: styles.container,
-  text: '',
   numberOfLines: 3,
   seeMoreText: 'See more',
   seeLessText: 'See less',

@@ -75,9 +75,12 @@ export default Home;
 | `onExpand` | `func` | no | optional callback executed when expanded
 | `onCollapse` | `func` | no | optional callback executed when collapsed
 | `onReady` | `func` | no | optional callback executed when see more placement measurements are completed
-| `seeMoreContainerStyleSecondary` | `object` | no | Incase of text overlap, pass { position: 'relative' } see [issue](https://github.com/fawaz-ahmed/react-native-read-more/issues/52)
+| `seeMoreContainerStyleSecondary` | `object` | no | Incase of text overlap, pass { position: 'relative' } see [issue](https://github.com/fawaz-ahmed/react-native-read-more/issues/52) (not recommended)
 
 Any additional props are passed down to underlying `Text` component.
+
+# Usage with HTML
+HTML rendering is not part of this package, but can be done easily with the help of any custom html to text library. For sample code, refer to this [issue](https://github.com/fawaz-ahmed/react-native-read-more/issues/55#issuecomment-1046941770)
 
 # Run example
 ```
@@ -93,13 +96,14 @@ yarn android
 ```
 
 # Why another library ?
-This module will calculate where to position `See more` and `See less` within the same paragraph instead of occupying another line. It is a drop-in replacement for `Text` component and you can control when to apply the see more functionality by configuring the `numberOfLines` prop. Moreover, you can also pass your own custom implementation of `Text` component like `ParsedText` etc.
+This module will calculate where to position `See more` and `See less` within the same paragraph instead of occupying another line. It is a drop-in replacement for `Text` component and you can control when to apply the see more functionality by configuring the `numberOfLines` prop. Moreover, you can also pass your own custom implementation of `Text` component like `ParsedText` ([sample code](https://github.com/fawaz-ahmed/react-native-read-more/issues/37#issuecomment-1047029209)) etc.
 
 ## Seeing issues or any feedback or feature suggest ?
 Create an [issue](https://github.com/fawaz-ahmed/react-native-read-more/issues) with github.
 
 ## Troubleshooting
 - If you observe `See more` shown always in android, pass prop `allowFontScaling={false}`, refer to this [issue](https://github.com/fawaz-ahmed/react-native-read-more/issues/17)
+- If you have any nested components other than `Text`, refer to this [issue](https://github.com/fawaz-ahmed/react-native-read-more/issues/52)
 
 ### jest - running unit tests
 This package is not transpiled. So inorder for your test cases to work, this package should be transpiled by babel. For this you need to add this path `!node_modules/@fawazahmed/react-native-read-more/` under `transformIgnorePatterns` option provided by `jest`. In your `package.json` you will see this `jest` config:
