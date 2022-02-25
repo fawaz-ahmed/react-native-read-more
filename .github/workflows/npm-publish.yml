@@ -12,10 +12,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
       - uses: actions/setup-node@v1
         with:
-          node-version: 12
+          node-version: 14.17.6
           registry-url: https://registry.npmjs.org/
+
+      - name: Install
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
       - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}

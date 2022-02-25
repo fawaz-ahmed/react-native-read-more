@@ -1,11 +1,12 @@
 {
   "name": "@fawazahmed/react-native-read-more",
-  "version": "2.3.3",
+  "version": "2.3.4",
   "description": "A simple react native library to show large blocks of text in a condensed manner with the ability to collapse and expand.",
-  "main": "index.js",
+  "main": "dist/index.js",
   "types": "index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel example/src/** -d ./dist"
   },
   "repository": {
     "type": "git",
@@ -24,7 +25,10 @@
     "mobile",
     "ios",
     "android",
-    "ui"
+    "ui",
+    "javascript",
+    "typescript",
+    "inline"
   ],
   "author": {
     "name": "Fawaz Ahmed",
@@ -40,5 +44,14 @@
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.17.6",
+    "@babel/core": "^7.17.5",
+    "metro-react-native-babel-preset": "^0.68.0"
   }
 }
