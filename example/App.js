@@ -1,6 +1,6 @@
 import React from 'react';
 import {SafeAreaView, StyleSheet, View} from 'react-native';
-import ReadMore from './src/ReadMore';
+import ReadMore from './src';
 
 const App = () => {
   return (

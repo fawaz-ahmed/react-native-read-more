@@ -9,4 +9,9 @@ node_modules
 tmp
 
 # Examples (If applicable to your project)
-examples
+example/
+.github/
+.gitignore
+babel.config.js
+yarn.lock
+package-lock.json
