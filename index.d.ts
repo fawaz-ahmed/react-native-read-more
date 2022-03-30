@@ -16,7 +16,7 @@ export interface ReadMoreProps extends TextProps {
     seeMoreOverlapCount?: number;
     debounceSeeMoreCalc?: number;
     onReady?: () => void;
-    seeMoreContainerStyleSecondary: StyleProp<ViewStyle>;
+    seeMoreContainerStyleSecondary?: StyleProp<ViewStyle>;
 }
 declare const ReadMore: React.FC<ReadMoreProps>;
 export default ReadMore;
