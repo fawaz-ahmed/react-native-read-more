@@ -43,6 +43,7 @@ const ReadMore = ({
   debounceSeeMoreCalc,
   onReady,
   seeMoreContainerStyleSecondary,
+  onSeeMoreBlocked,
   ...restProps
 }) => {
   const [additionalProps, setAdditionalProps] = useState({});
@@ -180,8 +181,13 @@ const ReadMore = ({
   );
 
   const toggle = useCallback(() => {
-    setCollapsed(prev => !prev);
-  }, [setCollapsed]);
+    if (onSeeMoreBlocked) {
+      onSeeMoreBlocked();
+    }
+    else {
+      setCollapsed(prev => !prev);
+    }
+  }, [setCollapsed, onSeeMoreBlocked]);
 
   const updateLineOfImpact = useCallback(
     (_text = '', resetCollapsedChildren = true) => {
@@ -692,6 +698,7 @@ ReadMore.propTypes = {
   debounceSeeMoreCalc: PropTypes.number,
   onReady: PropTypes.func,
   seeMoreContainerStyleSecondary: PropTypes.object,
+  onSeeMoreBlocked: PropTypes.func,
 };
 
 ReadMore.defaultProps = {
@@ -716,6 +723,7 @@ ReadMore.defaultProps = {
   }),
   onReady: () => {},
   seeMoreContainerStyleSecondary: {},
+  onSeeMoreBlocked: undefined,
 };
 
 export default memo(ReadMore);

@@ -1,7 +1,9 @@
 ![NPM Downloads](https://img.shields.io/npm/dm/@fawazahmed/react-native-read-more) ![NPM License](https://img.shields.io/npm/l/@fawazahmed/react-native-read-more) ![NPM Version](https://img.shields.io/npm/v/@fawazahmed/react-native-read-more)
 
 #### Please :star: it, thanks :thumbsup:
+
 # react-native-read-more
+
 React native library to show text in a condensed way and expand when needed. Can be used with native or expo on all platforms. Supports TS/JS both.
 
 ![Example](example/seemore.gif)
@@ -21,9 +23,8 @@ yarn add @fawazahmed/react-native-read-more
 ### Usage
 
 ```javascript
-
 import React from 'react';
-import {SafeAreaView, StyleSheet, View} from 'react-native';
+import { SafeAreaView, StyleSheet, View } from 'react-native';
 import ReadMore from '@fawazahmed/react-native-read-more';
 
 const Home = () => {
@@ -54,35 +55,37 @@ const styles = StyleSheet.create({
 });
 
 export default Home;
-
 ```
 
 ## Props
 
-| Prop | Type | Required | Note |
-|---|---|---|---|
-| `style` | `object or array` | no | text style
-| `seeMoreText` | `string` | no | defaults to `See more`
-| `seeMoreStyle` | `object or array` | no | text style for `See more` text
-| `seeLessText` | `string` | no | defaults to `See less`
-| `seeLessStyle` | `object or array` | no | text style for `See less` text
-| `ellipsis` | `string` | no | defaults to `...`
-| `wrapperStyle` | `object or array` | no | style for wrapper `View`
-| `numberOfLines` | `number` | no | defaults to `3`
-| `animate` | `bool` | no | defaults to `true` => applies a subtle animation to see more and see less text, not the complete text itself
-| `customTextComponent` | `React component` | no | defaults to `Text`
-| `expandOnly` | `bool` | no | defaults to `false` => hide see less option similar to a linkedIn post
-| `onExpand` | `func` | no | optional callback executed when expanded
-| `onCollapse` | `func` | no | optional callback executed when collapsed
-| `onReady` | `func` | no | optional callback executed when see more placement measurements are completed
-| `seeMoreContainerStyleSecondary` | `object` | no | Incase of text overlap, pass { position: 'relative' } see [issue](https://github.com/fawaz-ahmed/react-native-read-more/issues/52) (not recommended)
+| Prop                             | Type              | Required | Note                                                                                                                                                                                                 |
+| -------------------------------- | ----------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `style`                          | `object or array` | no       | text style                                                                                                                                                                                           |
+| `seeMoreText`                    | `string`          | no       | defaults to `See more`                                                                                                                                                                               |
+| `seeMoreStyle`                   | `object or array` | no       | text style for `See more` text                                                                                                                                                                       |
+| `seeLessText`                    | `string`          | no       | defaults to `See less`                                                                                                                                                                               |
+| `seeLessStyle`                   | `object or array` | no       | text style for `See less` text                                                                                                                                                                       |
+| `ellipsis`                       | `string`          | no       | defaults to `...`                                                                                                                                                                                    |
+| `wrapperStyle`                   | `object or array` | no       | style for wrapper `View`                                                                                                                                                                             |
+| `numberOfLines`                  | `number`          | no       | defaults to `3`                                                                                                                                                                                      |
+| `animate`                        | `bool`            | no       | defaults to `true` => applies a subtle animation to see more and see less text, not the complete text itself                                                                                         |
+| `customTextComponent`            | `React component` | no       | defaults to `Text`                                                                                                                                                                                   |
+| `expandOnly`                     | `bool`            | no       | defaults to `false` => hide see less option similar to a linkedIn post                                                                                                                               |
+| `onExpand`                       | `func`            | no       | optional callback executed when expanded                                                                                                                                                             |
+| `onCollapse`                     | `func`            | no       | optional callback executed when collapsed                                                                                                                                                            |
+| `onReady`                        | `func`            | no       | optional callback executed when see more placement measurements are completed                                                                                                                        |
+| `seeMoreContainerStyleSecondary` | `object`          | no       | Incase of text overlap, pass { position: 'relative' } see [issue](https://github.com/fawaz-ahmed/react-native-read-more/issues/52) (not recommended)                                                 |
+| `onSeeMoreBlocked`               | `func`            | no       | when a function is passed, will disable the default See More toggling and use the custom callback instead. Useful to do things like open a modal instead of expanding text when See More is pressed. |
 
 Any additional props are passed down to underlying `Text` component.
 
 # Usage with HTML
+
 HTML rendering is not part of this package, but can be done easily with the help of any custom html to text library. For sample code, refer to this [issue](https://github.com/fawaz-ahmed/react-native-read-more/issues/55#issuecomment-1046941770)
 
 # Run example
+
 ```
 git clone https://github.com/fawaz-ahmed/react-native-read-more.git
 cd react-native-read-more/example
@@ -96,19 +99,24 @@ yarn android
 ```
 
 # Why another library ?
+
 This module will calculate where to position `See more` and `See less` within the same paragraph instead of occupying another line. It is a drop-in replacement for `Text` component and you can control when to apply the see more functionality by configuring the `numberOfLines` prop. Moreover, you can also pass your own custom implementation of `Text` component like `ParsedText` ([sample code](https://github.com/fawaz-ahmed/react-native-read-more/issues/37#issuecomment-1047029209)) etc.
 
 ## Testing with Jest
+
 Make sure to add `jest.useFakeTimers();` to your test file.
 See [Stackoverflow post](https://stackoverflow.com/questions/50793885/referenceerror-you-are-trying-to-import-a-file-after-the-jest-environment-has) and [jest timer mocks](https://jestjs.io/docs/timer-mocks)
 
 ## Seeing issues or any feedback or feature suggest ?
+
 Create an [issue](https://github.com/fawaz-ahmed/react-native-read-more/issues) with github.
 
 ## Troubleshooting
+
 - If you observe `See more` shown always in android, pass prop `allowFontScaling={false}`, refer to this [issue](https://github.com/fawaz-ahmed/react-native-read-more/issues/17)
 - If you have any nested components other than `Text`, refer to this [issue](https://github.com/fawaz-ahmed/react-native-read-more/issues/52)
 
 ### Known issues
+
 `Android only` if `numberOfLines` with a value of `1` is passed down as a prop, text in android devices will overlap at the end of line. This is an issue in `react-native` where text from other lines concatenates into the first one even if we add `\n` to the first line, where the lines returned from `onTextLayout` indicates a different response.
 To overcome this issue, use `numberOfLines` greater than `1`.
