@@ -76,6 +76,7 @@ export default Home;
 | `onCollapse` | `func` | no | optional callback executed when collapsed
 | `onReady` | `func` | no | optional callback executed when see more placement measurements are completed
 | `seeMoreContainerStyleSecondary` | `object` | no | Incase of text overlap, pass { position: 'relative' } see [issue](https://github.com/fawaz-ahmed/react-native-read-more/issues/52) (not recommended)
+| `onSeeMoreBlocked` | `func` | no | when a function is passed, will disable the default See More toggling and use the custom callback instead. Useful to do things like open a modal instead of expanding text when See More is pressed.
 
 Any additional props are passed down to underlying `Text` component.
 
