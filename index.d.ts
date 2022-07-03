@@ -18,6 +18,7 @@ export interface ReadMoreProps extends TextProps {
     onReady?: () => void;
     seeMoreContainerStyleSecondary?: StyleProp<ViewStyle>;
     onSeeMoreBlocked?: () => void;
+    debug?: boolean;
 }
 declare const ReadMore: React.FC<ReadMoreProps>;
 export default ReadMore;

@@ -23,6 +23,15 @@ const readmoreAnimation = LayoutAnimation.create(
   LayoutAnimation.Properties.opacity,
 );
 
+const logClosure =
+  printLogs =>
+  (...args) => {
+    if (!printLogs) {
+      return;
+    }
+    return console.log(...args);
+  };
+
 const ReadMore = ({
   numberOfLines,
   style,
@@ -44,6 +53,7 @@ const ReadMore = ({
   onReady,
   seeMoreContainerStyleSecondary,
   onSeeMoreBlocked,
+  debug,
   ...restProps
 }) => {
   const [additionalProps, setAdditionalProps] = useState({});
@@ -53,7 +63,8 @@ const ReadMore = ({
   );
   const [textWidth, setTextWidth] = useState(0);
   const [truncatedLineOfImpact, setTruncatedLineOfImpact] = useState('');
-  const [truncatedLineOfImpactWidth, setTruncatedLineOfImpactWidth] = useState(0);
+  const [truncatedLineOfImpactWidth, setTruncatedLineOfImpactWidth] =
+    useState(0);
   const [lines, setLines] = useState([]);
   const [collapsedLines, setCollapsedLines] = useState([]);
   const [seeMoreRightPadding, setSeeMoreRightPadding] = useState(0);
@@ -79,6 +90,9 @@ const ReadMore = ({
   // width of see more component
   const [seeMoreWidth, setSeeMoreWidth] = useState(0);
   const [hideEllipsis, setHideEllipsis] = useState(false);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const log = useCallback(logClosure(debug), [debug]);
 
   const onSeeMoreViewLayout = useCallback(
     ({
@@ -183,8 +197,7 @@ const ReadMore = ({
   const toggle = useCallback(() => {
     if (onSeeMoreBlocked) {
       onSeeMoreBlocked();
-    }
-    else {
+    } else {
       setCollapsed(prev => !prev);
     }
   }, [setCollapsed, onSeeMoreBlocked]);
@@ -224,10 +237,12 @@ const ReadMore = ({
       !seeMore ||
       !seeMoreWidth
     ) {
+      log('terminating measurements for see more - 1');
       return;
     }
 
     if (!lines[numberOfLines - 1] || !collapsedLines[numberOfLines - 1]) {
+      log('terminating measurements for see more - 2');
       return;
     }
 
@@ -259,6 +274,7 @@ const ReadMore = ({
     }
 
     // case 1
+    log('case 1');
     // if no text after right trim
     // hide ellipsis
     // move see more to beginning
@@ -269,6 +285,7 @@ const ReadMore = ({
     const availableWidth = textWidth - seeMoreWidth;
 
     // case 2
+    log('case 2');
     // text is there but no need to put \n
     // enough space for see more text on right side
     if (_lineOfImpact.width < availableWidth) {
@@ -279,6 +296,7 @@ const ReadMore = ({
       `${ellipsis} ${seeMoreText}`.length + seeMoreOverlapCount;
 
     // case 3
+    log('case 3');
     // many spaces at the end of text
     // so still no need to cutoff the text at end with \n
     const spaceDifference = _lineOfImpact?.text?.length - _trimmedText?.length;
@@ -287,6 +305,7 @@ const ReadMore = ({
     }
 
     // case 4
+    log('case 4');
     // create collapsed children with \n at the point
     const linesTillImpact = Array(_lineOfImpact.index + 1)
       .fill({})
@@ -361,6 +380,7 @@ const ReadMore = ({
     children,
     TextComponent,
     updateLineOfImpact,
+    log,
   ]);
 
   const textProps = afterCollapsed
@@ -400,7 +420,18 @@ const ReadMore = ({
   ];
 
   useEffect(() => {
-    setSeeMore(lines.length > numberOfLines);
+    const _seeMore = lines.length > numberOfLines;
+    setSeeMore(_seeMore);
+
+    if (!lines?.length) {
+      return;
+    }
+
+    if (!_seeMore) {
+      log('no measurement is needed');
+      onReady();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [numberOfLines, lines]);
 
   useEffect(() => {
@@ -699,6 +730,7 @@ ReadMore.propTypes = {
   onReady: PropTypes.func,
   seeMoreContainerStyleSecondary: PropTypes.object,
   onSeeMoreBlocked: PropTypes.func,
+  debug: PropTypes.bool,
 };
 
 ReadMore.defaultProps = {
@@ -724,6 +756,7 @@ ReadMore.defaultProps = {
   onReady: () => {},
   seeMoreContainerStyleSecondary: {},
   onSeeMoreBlocked: undefined,
+  debug: false,
 };
 
 export default memo(ReadMore);
