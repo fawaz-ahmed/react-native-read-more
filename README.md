@@ -1,6 +1,8 @@
 ![NPM Downloads](https://img.shields.io/npm/dm/@fawazahmed/react-native-read-more) ![NPM License](https://img.shields.io/npm/l/@fawazahmed/react-native-read-more) ![NPM Version](https://img.shields.io/npm/v/@fawazahmed/react-native-read-more)
 
-#### Please :star: it, thanks :thumbsup:
+#### Drop a :star: to this repo, it surely keeps me going.
+#### Sponsor my work on [lfx crowdfunding](https://crowdfunding.lfx.linuxfoundation.org/projects/react-native-read-more) or [Tidelift](https://tidelift.com/funding/github/npm/@fawazahmed/react-native-read-more).
+
 # react-native-read-more
 React native library to show text in a condensed way and expand when needed. Can be used with native or expo on all platforms. Supports TS/JS both.
 
