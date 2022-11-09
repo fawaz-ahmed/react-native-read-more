@@ -80,6 +80,7 @@ export default Home;
 | `debug` | `bool` | no | print debug logs to examine
 | `seeMoreContainerStyleSecondary` | `object` | no | Incase of text overlap, pass { position: 'relative' } see [issue](https://github.com/fawaz-ahmed/react-native-read-more/issues/52) (not recommended)
 | `onSeeMoreBlocked` | `func` | no | when a function is passed, will disable the default See More toggling and use the custom callback instead. Useful to do things like open a modal instead of expanding text when See More is pressed.
+| `collapsed` | `bool` | no | a property to set the collapsed state of the text component. Can be used toggle the collapsed state from outside.
 
 Any additional props are passed down to underlying `Text` component.
 

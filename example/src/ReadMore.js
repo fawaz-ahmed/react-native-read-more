@@ -54,6 +54,7 @@ const ReadMore = ({
   seeMoreContainerStyleSecondary,
   onSeeMoreBlocked,
   debug,
+  collapsed: collapsedProp,
   ...restProps
 }) => {
   const [additionalProps, setAdditionalProps] = useState({});
@@ -80,7 +81,7 @@ const ReadMore = ({
   const [isReady, setIsReady] = useState(false);
   // logic decisioning params
   const [seeMore, setSeeMore] = useState(false);
-  const [collapsed, setCollapsed] = useState(true);
+  const [collapsed, setCollapsed] = useState(collapsedProp);
   const [afterCollapsed, setAfterCollapsed] = useState(true);
   // copy of children with only text
   const [collapsedChildren, setCollapsedChildren] = useState(null);
@@ -450,6 +451,10 @@ const ReadMore = ({
   }, [collapsed]);
 
   useEffect(() => {
+    toggle();
+  }, [collapsedProp, toggle]);
+
+  useEffect(() => {
     const handle = setTimeout(() => {
       // to commence measurement chain
       // we should mount component 1
@@ -731,6 +736,7 @@ ReadMore.propTypes = {
   seeMoreContainerStyleSecondary: PropTypes.object,
   onSeeMoreBlocked: PropTypes.func,
   debug: PropTypes.bool,
+  collapsed: PropTypes.bool,
 };
 
 ReadMore.defaultProps = {
@@ -757,6 +763,7 @@ ReadMore.defaultProps = {
   seeMoreContainerStyleSecondary: {},
   onSeeMoreBlocked: undefined,
   debug: false,
+  collapsed: true,
 };
 
 export default memo(ReadMore);
