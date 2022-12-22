@@ -11,11 +11,19 @@ import {
 } from 'react-native';
 import {getTextByChildren, insertAt, linesToCharacters} from './helper';
 
-if (Platform.OS === 'android') {
-  if (UIManager.setLayoutAnimationEnabledExperimental) {
-    UIManager.setLayoutAnimationEnabledExperimental(true);
+let globalAnimationEnabled = false;
+const enableGlobalLayoutAnimation = enable => {
+  if (!enable || globalAnimationEnabled) {
+    return;
   }
-}
+  globalAnimationEnabled = true;
+  console.log('enabling global animation');
+  if (Platform.OS === 'android') {
+    if (UIManager.setLayoutAnimationEnabledExperimental) {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
+  }
+};
 
 const readmoreAnimation = LayoutAnimation.create(
   300,
@@ -52,8 +60,10 @@ const ReadMore = ({
   debounceSeeMoreCalc,
   onReady,
   seeMoreContainerStyleSecondary,
-  onSeeMoreBlocked,
+  onSeeMore: onSeeMoreBlocked,
+  onSeeLess: onSeeLessBlocked,
   debug,
+  collapsed: externalCollapsed,
   ...restProps
 }) => {
   const [additionalProps, setAdditionalProps] = useState({});
@@ -194,13 +204,47 @@ const ReadMore = ({
     ],
   );
 
-  const toggle = useCallback(() => {
-    if (onSeeMoreBlocked) {
-      onSeeMoreBlocked();
-    } else {
-      setCollapsed(prev => !prev);
+  const onPressSeeLess = useCallback(() => {
+    if (collapsed) {
+      log('Already collapsed');
+      return;
     }
-  }, [setCollapsed, onSeeMoreBlocked]);
+
+    if (onSeeLessBlocked) {
+      log('toggle blocked explicitly via prop onSeeLess');
+      return onSeeLessBlocked();
+    }
+
+    const isExternalCollapsedDefined = typeof externalCollapsed === 'boolean';
+    if (isExternalCollapsedDefined) {
+      log('toggle handled externally via collapsed prop');
+      return;
+    }
+
+    setCollapsed(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [collapsed, setCollapsed, onSeeLessBlocked, externalCollapsed]);
+
+  const onPressSeeMore = useCallback(() => {
+    if (!collapsed) {
+      log('Already expanded');
+      return;
+    }
+
+    if (onSeeMoreBlocked) {
+      log('toggle blocked explicitly via prop onSeeMore');
+      return onSeeMoreBlocked();
+    }
+
+    const isExternalCollapsedDefined = typeof externalCollapsed === 'boolean';
+    if (isExternalCollapsedDefined) {
+      log('toggle handled externally via collapsed prop');
+      return;
+    }
+
+    setCollapsed(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [collapsed, setCollapsed, onSeeMoreBlocked, externalCollapsed]);
 
   const updateLineOfImpact = useCallback(
     (_text = '', resetCollapsedChildren = true) => {
@@ -545,6 +589,22 @@ const ReadMore = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMeasured, isReady]);
 
+  useEffect(() => {
+    const isExternalCollapsedDefined = typeof externalCollapsed === 'boolean';
+    const collapsedStateDifferent = externalCollapsed !== collapsed;
+    if (isExternalCollapsedDefined && collapsedStateDifferent && isReady) {
+      log(
+        `Setting collapsed to ${externalCollapsed} extenrally via collapsed prop`,
+      );
+      setCollapsed(externalCollapsed);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [externalCollapsed, collapsed, isReady]);
+
+  useState(() => {
+    enableGlobalLayoutAnimation(animate);
+  }, [animate]);
+
   return (
     <View style={wrapperStyle}>
       {/* text component to measure see if see more is applicable and get lines */}
@@ -615,7 +675,7 @@ const ReadMore = ({
           <TextComponent
             {...additionalProps}
             {...restProps}
-            onPress={toggle}
+            onPress={onPressSeeLess}
             style={seeLessStyle}>
             {hiddenTextLinesWithSeeLess.length > lines.length ? '\n' : ' '}
             {seeLessText}
@@ -632,7 +692,7 @@ const ReadMore = ({
               key={`${isMeasured}-${hideEllipsis}`}
               {...additionalProps}
               {...restProps}
-              onPress={toggle}
+              onPress={onPressSeeMore}
               style={[
                 style,
                 seeMoreTextHidingStyle,
@@ -644,7 +704,7 @@ const ReadMore = ({
           <TextComponent
             {...additionalProps}
             {...restProps}
-            onPress={toggle}
+            onPress={onPressSeeMore}
             style={[style, seeMoreStyle, seeMoreTextHidingStyle]}>
             {seeMoreText}
           </TextComponent>
@@ -729,8 +789,10 @@ ReadMore.propTypes = {
   debounceSeeMoreCalc: PropTypes.number,
   onReady: PropTypes.func,
   seeMoreContainerStyleSecondary: PropTypes.object,
-  onSeeMoreBlocked: PropTypes.func,
+  onSeeMore: PropTypes.func,
+  onSeeLess: PropTypes.func,
   debug: PropTypes.bool,
+  collapsed: PropTypes.bool,
 };
 
 ReadMore.defaultProps = {
@@ -755,8 +817,10 @@ ReadMore.defaultProps = {
   }),
   onReady: () => {},
   seeMoreContainerStyleSecondary: {},
-  onSeeMoreBlocked: undefined,
+  onSeeMore: undefined,
+  onSeeLess: undefined,
   debug: false,
+  collapsed: undefined,
 };
 
 export default memo(ReadMore);
