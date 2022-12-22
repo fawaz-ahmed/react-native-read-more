@@ -1,6 +1,6 @@
 ![NPM Downloads](https://img.shields.io/npm/dm/@fawazahmed/react-native-read-more) ![NPM License](https://img.shields.io/npm/l/@fawazahmed/react-native-read-more) ![NPM Version](https://img.shields.io/npm/v/@fawazahmed/react-native-read-more)
 
-#### Drop a :star: to this repo, it surely keeps me going.
+#### Please give :star: and thanks for supporting!
 #### Sponsor my work on [lfx crowdfunding](https://crowdfunding.lfx.linuxfoundation.org/projects/react-native-read-more) or [Tidelift](https://tidelift.com/funding/github/npm/@fawazahmed/react-native-read-more).
 
 # react-native-read-more
@@ -77,9 +77,11 @@ export default Home;
 | `onExpand` | `func` | no | optional callback executed when expanded
 | `onCollapse` | `func` | no | optional callback executed when collapsed
 | `onReady` | `func` | no | optional callback executed when see more placement measurements are completed
+| `collapsed` | `bool` | no | Control collapsed state programatically see [issue](https://github.com/fawaz-ahmed/react-native-read-more/issues/61)
 | `debug` | `bool` | no | print debug logs to examine
 | `seeMoreContainerStyleSecondary` | `object` | no | Incase of text overlap, pass { position: 'relative' } see [issue](https://github.com/fawaz-ahmed/react-native-read-more/issues/52) (not recommended)
-| `onSeeMoreBlocked` | `func` | no | when a function is passed, will disable the default See More toggling and use the custom callback instead. Useful to do things like open a modal instead of expanding text when See More is pressed.
+| `onSeeMore` | `func` | no | when a function is passed, will disable the default See More toggling and use the custom callback instead. Useful to do things like open a modal instead of expanding text when See More is pressed.
+| `onSeeLess` | `func` | no | when a function is passed, will disable the default See Less toggling and use the custom callback instead. Useful to do things like open a modal instead of collapsing text when See Less is pressed.
 
 Any additional props are passed down to underlying `Text` component.
 
