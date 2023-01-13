@@ -7,7 +7,6 @@ import {
   LayoutAnimation,
   Platform,
   UIManager,
-  TextPropTypes,
 } from 'react-native';
 import {getTextByChildren, insertAt, linesToCharacters} from './helper';
 
@@ -17,7 +16,6 @@ const enableGlobalLayoutAnimation = enable => {
     return;
   }
   globalAnimationEnabled = true;
-  console.log('enabling global animation');
   if (Platform.OS === 'android') {
     if (UIManager.setLayoutAnimationEnabledExperimental) {
       UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -769,7 +767,6 @@ const styles = StyleSheet.create({
 });
 
 ReadMore.propTypes = {
-  ...TextPropTypes,
   seeMoreStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   seeLessStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   wrapperStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
