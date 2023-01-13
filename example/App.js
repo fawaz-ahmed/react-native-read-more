@@ -3,22 +3,10 @@ import {SafeAreaView, StyleSheet, View} from 'react-native';
 import ReadMore from './src';
 
 const App = () => {
-  const [collapsed, setCollapsed] = useState(true);
-
-  const toggle = () => {
-    setCollapsed(!collapsed);
-  };
-
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.root}>
-        <ReadMore
-          numberOfLines={3}
-          style={styles.textStyle}
-          collapsed={collapsed}
-          onPress={toggle}
-          onSeeMore={() => setCollapsed(false)}
-          onSeeLess={() => setCollapsed(true)}>
+        <ReadMore numberOfLines={3} style={styles.textStyle}>
           {
             "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
           }
