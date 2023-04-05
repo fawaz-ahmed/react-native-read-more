@@ -15,7 +15,7 @@ export interface ReadMoreProps extends TextProps {
     expandOnly?: boolean;
     seeMoreOverlapCount?: number;
     debounceSeeMoreCalc?: number;
-    onReady?: () => void;
+    onReady?: ({ canExpand: boolean, expandedLinesCount: number }) => void;
     seeMoreContainerStyleSecondary?: StyleProp<ViewStyle>;
     onSeeMore?: () => void;
     onSeeLess?: () => void;
