@@ -76,7 +76,7 @@ export default Home;
 | `expandOnly` | `bool` | no | defaults to `false` => hide see less option similar to a linkedIn post
 | `onExpand` | `func` | no | optional callback executed when expanded
 | `onCollapse` | `func` | no | optional callback executed when collapsed
-| `onReady` | `func` | no | optional callback executed when see more placement measurements are completed
+| `onReady` | `func` | no | optional callback executed when see more placement measurements are completed, this function will pass 2 arguments `({ canExpand, expandedLinesCount })`, where `canExpand` is a boolean specifying if text can be expanded and `expandedLinesCount` is a number indicating the number of lines when text is in expanded state.
 | `collapsed` | `bool` | no | Control collapsed state programatically see [issue](https://github.com/fawaz-ahmed/react-native-read-more/issues/61)
 | `debug` | `bool` | no | print debug logs to examine
 | `seeMoreContainerStyleSecondary` | `object` | no | Incase of text overlap, pass { position: 'relative' } see [issue](https://github.com/fawaz-ahmed/react-native-read-more/issues/52) (not recommended)

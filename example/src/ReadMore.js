@@ -471,7 +471,7 @@ const ReadMore = ({
 
     if (!_seeMore) {
       log('no measurement is needed');
-      onReady();
+      onReady({canExpand: _seeMore, expandedLinesCount: lines.length});
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [numberOfLines, lines]);
@@ -581,7 +581,7 @@ const ReadMore = ({
 
     const handle = setTimeout(() => {
       setIsReady(true);
-      onReady();
+      onReady({canExpand: seeMore, expandedLinesCount: lines.length});
     }, debounceSeeMoreCalc);
     return () => clearTimeout(handle);
     // eslint-disable-next-line react-hooks/exhaustive-deps
