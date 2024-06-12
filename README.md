@@ -2,6 +2,10 @@
 
 #### If it helps, do :star: it, appreciate all the support!
 #### Sponsor my work on [lfx crowdfunding](https://crowdfunding.lfx.linuxfoundation.org/projects/react-native-read-more) or [Tidelift](https://tidelift.com/funding/github/npm/@fawazahmed/react-native-read-more).
+#### For any react-native support, reach out on email (allow 24hrs to respond)
+```
+fawaz_ahmed@live.com
+```
 
 # react-native-read-more
 React native library to show text in a condensed way and expand when needed. Can be used with native or expo on all platforms. Supports TS/JS both. It's a pure JS solution and does not requires any native dependencies.
